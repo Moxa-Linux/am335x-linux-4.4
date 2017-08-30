@@ -20,6 +20,7 @@
 #include <linux/string.h>
 #include <linux/tty.h>
 #include <linux/8250_pci.h>
+#include <linux/platform_data/gpio-exar.h>
 
 #include <asm/byteorder.h>
 
@@ -188,7 +189,8 @@ static void setup_gpio(struct pci_dev *pcidev, u8 __iomem *p)
 }
 
 static void *
-__xr17v35x_register_gpio(struct pci_dev *pcidev)
+__xr17v35x_register_gpio(struct pci_dev *pcidev,
+			 const struct gpio_exar_pdata *pdata)
 {
 	struct platform_device *pdev;
 
@@ -199,7 +201,8 @@ __xr17v35x_register_gpio(struct pci_dev *pcidev)
 	pdev->dev.parent = &pcidev->dev;
 	ACPI_COMPANION_SET(&pdev->dev, ACPI_COMPANION(&pcidev->dev));
 
-	if (platform_device_add(pdev) < 0) {
+	if (platform_device_add_data(pdev, pdata, sizeof(*pdata)) < 0 ||
+	    platform_device_add(pdev) < 0) {
 		platform_device_put(pdev);
 		return NULL;
 	}
@@ -207,12 +210,17 @@ __xr17v35x_register_gpio(struct pci_dev *pcidev)
 	return pdev;
 }
 
+static const struct gpio_exar_pdata exar_gpio_pdata = {
+	.first_pin = 0,
+	.ngpios = 16,
+};
+
 static int xr17v35x_register_gpio(struct pci_dev *pcidev,
 				  struct uart_8250_port *port)
 {
 	if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
 		port->port.private_data =
-			__xr17v35x_register_gpio(pcidev);
+			__xr17v35x_register_gpio(pcidev, &exar_gpio_pdata);
 
 	return 0;
 }
