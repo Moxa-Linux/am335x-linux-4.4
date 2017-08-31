@@ -241,7 +241,7 @@
 			clocks = <&mstp2_clks R8A7743_CLK_SCIFB0>;
 			clock-names = "sci_ick";
 			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
-		       <&dmac1 0x3d>, <&dmac1 0x3e>;
+			       <&dmac1 0x3d>, <&dmac1 0x3e>;
 			dma-names = "tx", "rx", "tx", "rx";
 			power-domains = <&cpg_clocks>;
 			status = "disabled";
