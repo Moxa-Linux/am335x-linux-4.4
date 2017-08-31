@@ -58,6 +58,9 @@
 			      <0 0xf1006000 0 0x2000>;
 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
 						 IRQ_TYPE_LEVEL_HIGH)>;
+			clocks = <&mstp4_clks R8A7743_CLK_INTC_SYS>;
+			clock-names = "clk";
+			power-domains = <&cpg_clocks>;
 		};
 
 		irqc: interrupt-controller@e61c0000 {
