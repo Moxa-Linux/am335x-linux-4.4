@@ -1,7 +1,7 @@
 /*
  * Device Tree Source for the r8a7743 SoC
  *
- * Copyright (C) 2016 Cogent Embedded Inc.
+ * Copyright (C) 2016-2017 Cogent Embedded Inc.
  * Copyright (C) 2017 Renesas Electronics Corp.
  *
  * This file is licensed under the terms of the GNU General Public License
@@ -91,6 +91,11 @@
 						  IRQ_TYPE_LEVEL_LOW)>,
 				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
 						  IRQ_TYPE_LEVEL_LOW)>;
+		};
+
+		pfc: pin-controller@e6060000 {
+			compatible = "renesas,pfc-r8a7743";
+			reg = <0 0xe6060000 0 0x250>;
 		};
 
 		dmac0: dma-controller@e6700000 {
