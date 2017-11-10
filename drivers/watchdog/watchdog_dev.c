@@ -731,8 +731,15 @@ int __init watchdog_dev_init(void)
 	}
 
 	err = alloc_chrdev_region(&watchdog_devt, 0, MAX_DOGS, "watchdog");
-	if (err < 0)
+	if (err < 0) {
 		pr_err("watchdog: unable to allocate char dev region\n");
+		goto err_alloc;
+	}
+
+	return 0;
+
+err_alloc:
+	destroy_workqueue(watchdog_wq);
 	return err;
 }
 
