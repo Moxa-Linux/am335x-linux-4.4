@@ -35,9 +35,11 @@
 #include <linux/module.h>	/* For module stuff/... */
 #include <linux/types.h>	/* For standard types (like size_t) */
 #include <linux/errno.h>	/* For the -ENODEV/... values */
+#include <linux/jiffies.h>	/* For timeout functions */
 #include <linux/kernel.h>	/* For printk/panic/... */
 #include <linux/fs.h>		/* For file operations */
 #include <linux/watchdog.h>	/* For watchdog specific items */
+#include <linux/workqueue.h>	/* For workqueue */
 #include <linux/miscdevice.h>	/* For handling misc devices */
 #include <linux/init.h>		/* For __init/__exit/... */
 #include <linux/uaccess.h>	/* For copy_to_user/put_user/... */
@@ -48,6 +50,73 @@
 static dev_t watchdog_devt;
 /* the watchdog device behind /dev/watchdog */
 static struct watchdog_device *old_wdd;
+
+static struct workqueue_struct *watchdog_wq;
+
+static inline bool watchdog_need_worker(struct watchdog_device *wdd)
+{
+	/* All variables in milli-seconds */
+	unsigned int hm = wdd->max_hw_heartbeat_ms;
+	unsigned int t = wdd->timeout * 1000;
+
+	/*
+	 * A worker to generate heartbeat requests is needed if all of the
+	 * following conditions are true.
+	 * - Userspace activated the watchdog.
+	 * - The driver provided a value for the maximum hardware timeout, and
+	 *   thus is aware that the framework supports generating heartbeat
+	 *   requests.
+	 * - Userspace requests a longer timeout than the hardware can handle.
+	 */
+	return watchdog_active(wdd) && hm && t > hm;
+}
+
+static long watchdog_next_keepalive(struct watchdog_device *wdd)
+{
+	unsigned int timeout_ms = wdd->timeout * 1000;
+	unsigned long keepalive_interval;
+	unsigned long last_heartbeat;
+	unsigned long virt_timeout;
+	unsigned int hw_heartbeat_ms;
+
+	virt_timeout = wdd->last_keepalive + msecs_to_jiffies(timeout_ms);
+	hw_heartbeat_ms = min(timeout_ms, wdd->max_hw_heartbeat_ms);
+	keepalive_interval = msecs_to_jiffies(hw_heartbeat_ms / 2);
+
+	/*
+	 * To ensure that the watchdog times out wdd->timeout seconds
+	 * after the most recent ping from userspace, the last
+	 * worker ping has to come in hw_heartbeat_ms before this timeout.
+	 */
+	last_heartbeat = virt_timeout - msecs_to_jiffies(hw_heartbeat_ms);
+	return min_t(long, last_heartbeat - jiffies, keepalive_interval);
+}
+
+static inline void watchdog_update_worker(struct watchdog_device *wdd)
+{
+	if (watchdog_need_worker(wdd)) {
+		long t = watchdog_next_keepalive(wdd);
+
+		if (t > 0)
+			mod_delayed_work(watchdog_wq, &wdd->work, t);
+	} else {
+		cancel_delayed_work(&wdd->work);
+	}
+}
+
+static int __watchdog_ping(struct watchdog_device *wdd)
+{
+	int err;
+
+	if (wdd->ops->ping)
+		err = wdd->ops->ping(wdd);  /* ping the watchdog */
+	else
+		err = wdd->ops->start(wdd); /* restart watchdog */
+
+	watchdog_update_worker(wdd);
+
+	return err;
+}
 
 /*
  *	watchdog_ping: ping the watchdog.
@@ -73,14 +142,25 @@ static int watchdog_ping(struct watchdog_device *wdd)
 	if (!watchdog_active(wdd))
 		goto out_ping;
 
-	if (wdd->ops->ping)
-		err = wdd->ops->ping(wdd);	/* ping the watchdog */
-	else
-		err = wdd->ops->start(wdd);	/* restart watchdog */
+	wdd->last_keepalive = jiffies;
+	err = __watchdog_ping(wdd);
 
 out_ping:
 	mutex_unlock(&wdd->lock);
 	return err;
+}
+
+static void watchdog_ping_work(struct work_struct *work)
+{
+	struct watchdog_device *wdd;
+
+	wdd = container_of(to_delayed_work(work), struct watchdog_device,
+			       work);
+
+	mutex_lock(&wdd->lock);
+	if (wdd && watchdog_active(wdd))
+		__watchdog_ping(wdd);
+	mutex_unlock(&wdd->lock);
 }
 
 /*
@@ -95,6 +175,7 @@ out_ping:
 static int watchdog_start(struct watchdog_device *wdd)
 {
 	int err = 0;
+	unsigned long started_at;
 
 	mutex_lock(&wdd->lock);
 
@@ -106,9 +187,13 @@ static int watchdog_start(struct watchdog_device *wdd)
 	if (watchdog_active(wdd))
 		goto out_start;
 
+	started_at = jiffies;
 	err = wdd->ops->start(wdd);
-	if (err == 0)
+	if (err == 0) {
 		set_bit(WDOG_ACTIVE, &wdd->status);
+		wdd->last_keepalive = started_at;
+		watchdog_update_worker(wdd);
+	}
 
 out_start:
 	mutex_unlock(&wdd->lock);
@@ -146,8 +231,10 @@ static int watchdog_stop(struct watchdog_device *wdd)
 	}
 
 	err = wdd->ops->stop(wdd);
-	if (err == 0)
+	if (err == 0) {
 		clear_bit(WDOG_ACTIVE, &wdd->status);
+		cancel_delayed_work(&wdd->work);
+	}
 
 out_stop:
 	mutex_unlock(&wdd->lock);
@@ -210,6 +297,8 @@ static int watchdog_set_timeout(struct watchdog_device *wdd,
 	}
 
 	err = wdd->ops->set_timeout(wdd, timeout);
+
+	watchdog_update_worker(wdd);
 
 out_timeout:
 	mutex_unlock(&wdd->lock);
@@ -490,6 +579,8 @@ static int watchdog_release(struct inode *inode, struct file *file)
 	/* Allow the owner module to be unloaded again */
 	module_put(wdd->ops->owner);
 
+	cancel_delayed_work_sync(&wdd->work);
+
 	/* make sure that /dev/watchdog can be re-opened */
 	clear_bit(WDOG_DEV_OPEN, &wdd->status);
 
@@ -526,6 +617,11 @@ static struct miscdevice watchdog_miscdev = {
 int watchdog_dev_register(struct watchdog_device *wdd)
 {
 	int err, devno;
+
+	if (!watchdog_wq)
+		return -ENODEV;
+
+	INIT_DELAYED_WORK(&wdd->work, watchdog_ping_work);
 
 	if (wdd->id == 0) {
 		old_wdd = wdd;
@@ -573,6 +669,8 @@ int watchdog_dev_unregister(struct watchdog_device *wdd)
 	set_bit(WDOG_UNREGISTERED, &wdd->status);
 	mutex_unlock(&wdd->lock);
 
+	cancel_delayed_work_sync(&wdd->work);
+
 	cdev_del(&wdd->cdev);
 	if (wdd->id == 0) {
 		misc_deregister(&watchdog_miscdev);
@@ -589,7 +687,16 @@ int watchdog_dev_unregister(struct watchdog_device *wdd)
 
 int __init watchdog_dev_init(void)
 {
-	int err = alloc_chrdev_region(&watchdog_devt, 0, MAX_DOGS, "watchdog");
+	int err;
+
+	watchdog_wq = alloc_workqueue("watchdogd",
+				      WQ_HIGHPRI | WQ_MEM_RECLAIM, 0);
+	if (!watchdog_wq) {
+		pr_err("Failed to create watchdog workqueue\n");
+		return -ENOMEM;
+	}
+
+	err = alloc_chrdev_region(&watchdog_devt, 0, MAX_DOGS, "watchdog");
 	if (err < 0)
 		pr_err("watchdog: unable to allocate char dev region\n");
 	return err;
@@ -604,4 +711,5 @@ int __init watchdog_dev_init(void)
 void __exit watchdog_dev_exit(void)
 {
 	unregister_chrdev_region(watchdog_devt, MAX_DOGS);
+	destroy_workqueue(watchdog_wq);
 }
