@@ -596,7 +596,6 @@ static int watchdog_release(struct inode *inode, struct file *file)
 	if (!watchdog_hw_running(wdd))
 		module_put(wdd->ops->owner);
 
-	cancel_delayed_work_sync(&wdd->work);
 	watchdog_update_worker(wdd);
 
 	/* make sure that /dev/watchdog can be re-opened */
