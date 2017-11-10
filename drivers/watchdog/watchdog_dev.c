@@ -53,6 +53,9 @@ static struct watchdog_device *old_wdd;
 
 static struct workqueue_struct *watchdog_wq;
 
+static bool handle_boot_enabled =
+	IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED);
+
 static inline bool watchdog_need_worker(struct watchdog_device *wdd)
 {
 	/* All variables in milli-seconds */
@@ -683,10 +686,15 @@ int watchdog_dev_register(struct watchdog_device *wdd)
 	 * and schedule an immediate ping.
 	 */
 	if (watchdog_hw_running(wdd)) {
-		__module_get(wdd->ops->owner);
-		if (wdd->ops->ref)
-			wdd->ops->ref(wdd);
-		queue_delayed_work(watchdog_wq, &wdd->work, 0);
+		if (handle_boot_enabled) {
+			__module_get(wdd->ops->owner);
+			if (wdd->ops->ref)
+				wdd->ops->ref(wdd);
+			queue_delayed_work(watchdog_wq, &wdd->work, 0);
+		} else {
+			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
+					wdd->id);
+		}
 	}
 
 	return 0;
@@ -756,3 +764,8 @@ void __exit watchdog_dev_exit(void)
 	unregister_chrdev_region(watchdog_devt, MAX_DOGS);
 	destroy_workqueue(watchdog_wq);
 }
+
+module_param(handle_boot_enabled, bool, 0444);
+MODULE_PARM_DESC(handle_boot_enabled,
+	"Watchdog core auto-updates boot enabled watchdogs before userspace takes over (default="
+	__MODULE_STRING(IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED)) ")");
