@@ -68,7 +68,8 @@ static inline bool watchdog_need_worker(struct watchdog_device *wdd)
 	 *   requests.
 	 * - Userspace requests a longer timeout than the hardware can handle.
 	 */
-	return watchdog_active(wdd) && hm && t > hm;
+	return hm && ((watchdog_active(wdd) && t > hm) ||
+		      (t && !watchdog_active(wdd) && watchdog_hw_running(wdd)));
 }
 
 static long watchdog_next_keepalive(struct watchdog_device *wdd)
@@ -82,6 +83,9 @@ static long watchdog_next_keepalive(struct watchdog_device *wdd)
 	virt_timeout = wdd->last_keepalive + msecs_to_jiffies(timeout_ms);
 	hw_heartbeat_ms = min(timeout_ms, wdd->max_hw_heartbeat_ms);
 	keepalive_interval = msecs_to_jiffies(hw_heartbeat_ms / 2);
+
+	if (!watchdog_active(wdd))
+		return keepalive_interval;
 
 	/*
 	 * To ensure that the watchdog times out wdd->timeout seconds
@@ -139,7 +143,7 @@ static int watchdog_ping(struct watchdog_device *wdd)
 		goto out_ping;
 	}
 
-	if (!watchdog_active(wdd))
+	if (!watchdog_active(wdd) && !watchdog_hw_running(wdd))
 		goto out_ping;
 
 	wdd->last_keepalive = jiffies;
@@ -158,7 +162,7 @@ static void watchdog_ping_work(struct work_struct *work)
 			       work);
 
 	mutex_lock(&wdd->lock);
-	if (wdd && watchdog_active(wdd))
+	if (wdd && (watchdog_active(wdd) || watchdog_hw_running(wdd)))
 		__watchdog_ping(wdd);
 	mutex_unlock(&wdd->lock);
 }
@@ -188,7 +192,10 @@ static int watchdog_start(struct watchdog_device *wdd)
 		goto out_start;
 
 	started_at = jiffies;
-	err = wdd->ops->start(wdd);
+	if (watchdog_hw_running(wdd) && wdd->ops->ping)
+		err = wdd->ops->ping(wdd);
+	else
+		err = wdd->ops->start(wdd);
 	if (err == 0) {
 		set_bit(WDOG_ACTIVE, &wdd->status);
 		wdd->last_keepalive = started_at;
@@ -233,7 +240,7 @@ static int watchdog_stop(struct watchdog_device *wdd)
 	err = wdd->ops->stop(wdd);
 	if (err == 0) {
 		clear_bit(WDOG_ACTIVE, &wdd->status);
-		cancel_delayed_work(&wdd->work);
+		watchdog_update_worker(wdd);
 	}
 
 out_stop:
@@ -519,7 +526,7 @@ static int watchdog_open(struct inode *inode, struct file *file)
 	 * If the /dev/watchdog device is open, we don't want the module
 	 * to be unloaded.
 	 */
-	if (!try_module_get(wdd->ops->owner))
+	if (!watchdog_hw_running(wdd) && !try_module_get(wdd->ops->owner))
 		goto out;
 
 	err = watchdog_start(wdd);
@@ -528,7 +535,7 @@ static int watchdog_open(struct inode *inode, struct file *file)
 
 	file->private_data = wdd;
 
-	if (wdd->ops->ref)
+	if (!watchdog_hw_running(wdd) && wdd->ops->ref)
 		wdd->ops->ref(wdd);
 
 	/* dev/watchdog is a virtual (and thus non-seekable) filesystem */
@@ -577,15 +584,22 @@ static int watchdog_release(struct inode *inode, struct file *file)
 	}
 
 	/* Allow the owner module to be unloaded again */
-	module_put(wdd->ops->owner);
+	/*
+	 * Allow the owner module to be unloaded again unless the watchdog
+	 * is still running. If the watchdog is still running, it can not
+	 * be stopped, and its driver must not be unloaded.
+	 */
+	if (!watchdog_hw_running(wdd))
+		module_put(wdd->ops->owner);
 
 	cancel_delayed_work_sync(&wdd->work);
+	watchdog_update_worker(wdd);
 
 	/* make sure that /dev/watchdog can be re-opened */
 	clear_bit(WDOG_DEV_OPEN, &wdd->status);
 
 	/* Note wdd may be gone after this, do not use after this! */
-	if (wdd->ops->unref)
+	if (!watchdog_hw_running(wdd) && wdd->ops->unref)
 		wdd->ops->unref(wdd);
 
 	return 0;
@@ -652,8 +666,21 @@ int watchdog_dev_register(struct watchdog_device *wdd)
 			misc_deregister(&watchdog_miscdev);
 			old_wdd = NULL;
 		}
+		return err;
 	}
-	return err;
+
+	/*
+	 * If the watchdog is running, prevent its driver from being unloaded,
+	 * and schedule an immediate ping.
+	 */
+	if (watchdog_hw_running(wdd)) {
+		__module_get(wdd->ops->owner);
+		if (wdd->ops->ref)
+			wdd->ops->ref(wdd);
+		queue_delayed_work(watchdog_wq, &wdd->work, 0);
+	}
+
+	return 0;
 }
 
 /*
