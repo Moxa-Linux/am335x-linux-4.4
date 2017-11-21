@@ -176,12 +176,22 @@ static struct phy_driver realtek_drvs[] = {
 		.suspend	= genphy_suspend,
 		.resume		= genphy_resume,
 		.driver		= { .owner = THIS_MODULE },
+	}, {
+		.phy_id         = 0x001cc816,
+		.name           = "RealTek RTL8201FL",
+		.phy_id_mask    = 0x001fffff,
+		.features       = PHY_BASIC_FEATURES,
+		.flags          = PHY_HAS_INTERRUPT,
+		.config_aneg    = &genphy_config_aneg,
+		.read_status    = &genphy_read_status,
+		.driver         = { .owner = THIS_MODULE,},
 	},
 };
 
 module_phy_driver(realtek_drvs);
 
 static struct mdio_device_id __maybe_unused realtek_tbl[] = {
+	{ 0x001cc816, 0x001fffff },
 	{ 0x001cc912, 0x001fffff },
 	{ 0x001cc914, 0x001fffff },
 	{ 0x001cc915, 0x001fffff },
