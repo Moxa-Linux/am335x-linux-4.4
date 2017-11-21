@@ -597,6 +597,14 @@ config RENESAS_WDT
 	  This driver adds watchdog support for the integrated watchdogs in the
 	  Renesas R-Car and other SH-Mobile SoCs (usually named RWDT or SWDT).
 
+config RTC_DRV_DS1374_WDT
+    tristate "DS1374 Watchdog"
+    depends on RTC_DRV_DS1374
+		select WATCHDOG_CORE
+    help
+      DS1374 Watchdog timer. This will reboot your system when
+	  the timeout is reached.
+
 # AVR32 Architecture
 
 config AT32AP700X_WDT
