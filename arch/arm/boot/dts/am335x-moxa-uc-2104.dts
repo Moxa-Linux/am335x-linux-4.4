@@ -23,6 +23,48 @@
 		};
 	};
 
+	cpu0_opp_table: opp_table0 {
+		opp50@300000000 {
+			status = "okay";
+		};
+
+		opp100@275000000 {
+			status = "disabled";
+		};
+
+		opp100@300000000 {
+			status = "disabled";
+		};
+
+		opp100@500000000 {
+			status = "disabled";
+		};
+
+		opp100@600000000 {
+			status = "okay";
+		};
+
+		opp120@600000000 {
+			status = "disabled";
+		};
+
+		opp120@720000000 {
+			status = "okay";
+		};
+
+		oppturbo@720000000 {
+			status = "disabled";
+		};
+
+		oppturbo@800000000 {
+			status = "disabled";
+		};
+
+		oppnitro@1000000000 {
+			status = "okay";
+		};
+	};
+
 	memory {
 		device_type = "memory";
 		reg = <0x80000000 0x10000000>; /* 256 MB */
@@ -44,21 +86,16 @@
 	leds {
 		compatible = "gpio-leds";
 		led1 {
-			label = "uc2100:USER";
-			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
-			default-state = "off";
-		};
-		led2 {
 			label = "uc2100:SIGNAL1";
 			gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
-		led3 {
+		led2 {
 			label = "uc2100:SIGNAL2";
 			gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
-		led4 {
+		led3 {
 			label = "uc2100:SIGNAL3";
 			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
@@ -193,16 +230,7 @@
 	status = "okay";
 };
 
-&usb1_phy {
-	status = "okay";
-};
-
 &usb0 {
-	status = "okay";
-	dr_mode = "host";
-};
-
-&usb1 {
 	status = "okay";
 	dr_mode = "host";
 };
@@ -302,7 +330,6 @@
 &mac {
 	pinctrl-names = "default";
 	pinctrl-0 = <&cpsw_default>;
-	dual_emac = <1>;
 	status = "okay";
 };
 
@@ -316,7 +343,6 @@
 	status = "okay";
 	phy_id = <&davinci_mdio>, <0x4>;
 	phy-mode = "rmii";
-	dual_emac_res_vlan = <1>;
 };
 
 &cpsw_emac1 {
