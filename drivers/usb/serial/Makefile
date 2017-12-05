@@ -55,6 +55,7 @@ obj-$(CONFIG_USB_SERIAL_SSU100)			+= ssu100.o
 obj-$(CONFIG_USB_SERIAL_SYMBOL)			+= symbolserial.o
 obj-$(CONFIG_USB_SERIAL_WWAN)			+= usb_wwan.o
 obj-$(CONFIG_USB_SERIAL_TI)			+= ti_usb_3410_5052.o
+obj-$(CONFIG_USB_SERIAL_MOXA_UPORT_11X0)	+= mxu11x0.o
 obj-$(CONFIG_USB_SERIAL_VISOR)			+= visor.o
 obj-$(CONFIG_USB_SERIAL_WISHBONE)		+= wishbone-serial.o
 obj-$(CONFIG_USB_SERIAL_WHITEHEAT)		+= whiteheat.o
