@@ -273,6 +273,7 @@ static struct usb_device_id mxu1_id_table[] = {
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1151_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1131_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_3001_PRODUCT_ID) },
+	{ USB_DEVICE(TI_VENDOR_ID, MXU1_TI_PRODUCT_ID) },
 	{ }
 };
 
@@ -303,6 +304,11 @@ static struct usb_device_id mxu1131_id_table[] = {
 
 static struct usb_device_id mxu3001_id_table[] = {
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_3001_PRODUCT_ID) },
+	{ }
+};
+
+static struct usb_device_id mxuti_id_table[] = {
+	{ USB_DEVICE(TI_VENDOR_ID, MXU1_TI_PRODUCT_ID) },
 	{ }
 };
 
@@ -635,10 +641,59 @@ static struct usb_serial_device_type mxu3001_1port_device = {
 	.write_bulk_callback	= mxu1_bulk_out_callback,
 };
 
+#if(LINUX_VERSION_CODE > KERNEL_VERSION(2,6,13))
+static struct usb_serial_driver mxuti_1port_device = {
+	.driver={
+		.owner		= THIS_MODULE,
+		.name		= "mxuti",
+	},
+	.description		= "MOXA UPort TI",
+#if(LINUX_VERSION_CODE > KERNEL_VERSION(2,6,20)) && \
+	(LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+	.usb_driver		= &mxu1_usb_driver,
+#endif
+#else
+static struct usb_serial_device_type mxuti_1port_device = {
+	.owner			= THIS_MODULE,
+	.name			= "MOXA UPort TI",
+#endif
+	.id_table		= mxuti_id_table,
+#if(LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25))	
+	.num_interrupt_in	= NUM_DONT_CARE,
+	.num_bulk_in		= NUM_DONT_CARE,
+	.num_bulk_out		= NUM_DONT_CARE,
+#endif	
+	.num_ports		= 1,
+	.attach			= mxu1_startup,
+#ifdef ASYNCB_FIRST_KERNEL
+	.disconnect		= mxu1_disconnect,
+	.release		= mxu1_release,
+#else
+	.shutdown		= mxu1_shutdown,
+#endif
+	.open			= mxu1_open,
+	.close			= mxu1_close,
+	.write			= mxu1_write,
+	.write_room		= mxu1_write_room,
+	.chars_in_buffer	= mxu1_chars_in_buffer,
+	.throttle		= mxu1_throttle,
+	.unthrottle		= mxu1_unthrottle,
+	.ioctl			= mxu1_ioctl,
+	.set_termios		= mxu1_set_termios,
+	.tiocmget		= mxu1_tiocmget,
+	.tiocmset		= mxu1_tiocmset,
+#if(LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))	
+	.get_icount		= mxu1_get_icount,
+#endif		
+	.break_ctl		= mxu1_break,
+	.read_int_callback	= mxu1_interrupt_callback,
+	.read_bulk_callback	= mxu1_bulk_in_callback,
+	.write_bulk_callback	= mxu1_bulk_out_callback,
+};
 #if(LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0))
 static struct usb_serial_driver * const serial_drivers[] = {
 	&mxu1110_1port_device, &mxu1130_1port_device, &mxu1150_1port_device,
-	&mxu1151_1port_device, &mxu1131_1port_device, &mxu3001_1port_device, NULL
+	&mxu1151_1port_device, &mxu1131_1port_device, &mxu3001_1port_device, &mxuti_1port_device, NULL
 };
 #endif
 
@@ -656,6 +711,7 @@ MODULE_DEVICE_TABLE(usb, mxu1150_id_table);
 MODULE_DEVICE_TABLE(usb, mxu1151_id_table);
 MODULE_DEVICE_TABLE(usb, mxu1131_id_table);
 MODULE_DEVICE_TABLE(usb, mxu3001_id_table);
+MODULE_DEVICE_TABLE(usb, mxuti_id_table);
 
 /* Functions */
 
@@ -688,6 +744,10 @@ static int __init mxu1_init(void)
 	if (ret)
 		goto failed_3001;
 
+	ret = usb_serial_register(&mxuti_1port_device);
+	if (ret)
+		goto failed_ti;
+
 	ret = usb_register(&mxu1_usb_driver);
 	if (ret)
 		goto failed_usb;
@@ -703,6 +763,8 @@ failed_usb:
 	usb_serial_deregister(&mxu1131_1port_device);
 failed_3001:
 	usb_serial_deregister(&mxu3001_1port_device);
+failed_ti:
+	usb_serial_deregister(&mxuti_1port_device);
 failed_1131:
 	usb_serial_deregister(&mxu1151_1port_device);
 failed_1151:
@@ -725,6 +787,7 @@ static void __exit mxu1_exit(void)
 	usb_serial_deregister(&mxu1151_1port_device);
 	usb_serial_deregister(&mxu1131_1port_device);
 	usb_serial_deregister(&mxu3001_1port_device);
+	usb_serial_deregister(&mxuti_1port_device);
 }
 #else
 static int __init mxu1_init(void)
@@ -789,7 +852,7 @@ static int mxu1_startup(struct usb_serial *serial)
 	if (!usb_match_id(serial->interface, mxu1_id_table)){
 			return 0;
 	}
-	
+
 	switch(dev->descriptor.idProduct){
 		case MXU1_1110_PRODUCT_ID:
 			mxdev->mxd_model_name = MXU1_MODEL_1110;
@@ -808,6 +871,9 @@ static int mxu1_startup(struct usb_serial *serial)
 			break;
 		case MXU1_3001_PRODUCT_ID:
 			mxdev->mxd_model_name = MXU1_MODEL_3001;
+			break;
+		case MXU1_TI_PRODUCT_ID:
+			mxdev->mxd_model_name = MXU1_MODEL_1151;
 			break;
 		default:
 			return -ENODEV;
