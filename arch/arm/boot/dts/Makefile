@@ -474,7 +474,11 @@ dtb-$(CONFIG_SOC_AM33XX) += \
 	am335x-moxa-uc-2112.dtb \
 	am335x-moxa-uc-3101.dtb \
 	am335x-moxa-uc-3111.dtb \
-	am335x-moxa-uc-3121.dtb
+	am335x-moxa-uc-3121.dtb \
+	am335x-moxa-uc-5101.dtb \
+	am335x-moxa-uc-5102.dtb \
+	am335x-moxa-uc-5111.dtb \
+	am335x-moxa-uc-5112.dtb
 dtb-$(CONFIG_ARCH_OMAP4) += \
 	omap4-duovero-parlor.dtb \
 	omap4-panda.dtb \
