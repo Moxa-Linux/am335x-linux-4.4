@@ -85,20 +85,26 @@
 	leds {
 		compatible = "gpio-leds";
 		led@1 {
-			label = "uc5100:USER1";
+			label = "uc5100:SGN1";
 			gpios = <&gpio_xten 8 0>;
 			default-state = "off";
 		};
 
 		led@2 {
-			label = "uc5100:USER2";
+			label = "uc5100:SGN2";
 			gpios = <&gpio_xten 9 0>;
 			default-state = "off";
 		};
 
 		led@3 {
-			label = "uc5100:USER3";
+			label = "uc5100:SGN3";
 			gpios = <&gpio_xten 10 0>;
+			default-state = "off";
+		};
+
+		led@4 {
+			label = "uc5100:SYS";
+			gpios = <&gpio3 9 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 	};
@@ -113,7 +119,7 @@
 
 	push_button_pins: pinmux_push_button {
 		pinctrl-single,pins = <
-			AM33XX_IOPAD(0x9ac, PIN_INPUT_PULLDOWN | MUX_MODE7)  /* mcasp0_ahcklx.gpio3_21 */
+			AM33XX_IOPAD(0x9ac, PIN_INPUT_PULLUP | MUX_MODE7)  /* mcasp0_ahcklx.gpio3_21 */
 		>;
 	};
 
