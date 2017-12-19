@@ -91,7 +91,7 @@
 		};
 
 		led@2 {
-			label = "uc5100:SNG2";
+			label = "uc5100:SGN2";
 			gpios = <&gpio_xten 9 0>;
 			default-state = "off";
 		};
