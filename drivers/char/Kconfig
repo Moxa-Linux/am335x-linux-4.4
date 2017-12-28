@@ -582,6 +582,14 @@ config TELCLOCK
 	  /sys/devices/platform/telco_clock, with a number of files for
 	  controlling the behavior of this hardware.
 
+config NPORT_REAL_TTY
+	tristate "Moxa NPort Real TTY"
+	default n
+	help
+	  The purpose of this driver is to map NPort serial port to host tty
+	  port. Using this driver, you can use NPort serial port as local
+	  tty port.
+
 config DEVPORT
 	bool "/dev/port character device"
 	depends on ISA || PCI
