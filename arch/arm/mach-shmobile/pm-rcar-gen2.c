@@ -82,6 +82,9 @@ void __init rcar_gen2_pm_init(void)
 	} else if (of_machine_is_compatible("renesas,r8a7791")) {
 		boot_vector_addr = RAM;
 		syscier = 0x00111003;
+	} else if (of_machine_is_compatible("renesas,r8a7743")) {
+		boot_vector_addr = RAM;
+		syscier = 0x00101003;
 	}
 
 	/* RAM for jump stub, because BAR requires 256KB aligned address */
