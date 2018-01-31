@@ -35,6 +35,13 @@ static struct {
 #define PSTR_OFFS 0x40
 #define CPUNCR_OFFS(n) (0x100 + (0x10 * (n)))
 
+#define DBGRCR_OFFS	0x180		/* Debug Resource Reset Control Reg. */
+
+/* Debug Resource Reset Control Register */
+#define DBGCPUREN	BIT(24)		/* CPU Other Reset Request Enable */
+#define DBGCPUNREN(n)	BIT((n) + 20)	/* CPUn Reset Request Enable */
+#define DBGCPUPREN	BIT(19)		/* CPU Peripheral Reset Req. Enable */
+
 static int __maybe_unused apmu_power_on(void __iomem *p, int bit)
 {
 	/* request power on */
@@ -78,6 +85,8 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
 #ifdef CONFIG_SMP
 static void apmu_init_cpu(struct resource *res, int cpu, int bit)
 {
+	u32 x;
+
 	if ((cpu >= ARRAY_SIZE(apmu_cpus)) || apmu_cpus[cpu].iomem)
 		return;
 
@@ -85,6 +94,11 @@ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
 	apmu_cpus[cpu].bit = bit;
 
 	pr_debug("apmu ioremap %d %d %pr\n", cpu, bit, res);
+
+	/* Setup for debug mode */
+	x = readl(apmu_cpus[cpu].iomem + DBGRCR_OFFS);
+	x |= DBGCPUREN | DBGCPUNREN(bit) | DBGCPUPREN;
+	writel(x, apmu_cpus[cpu].iomem + DBGRCR_OFFS);
 }
 
 static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
