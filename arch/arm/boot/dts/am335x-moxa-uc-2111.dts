@@ -49,7 +49,7 @@
 		};
 
 		opp120@720000000 {
-			status = "okay";
+			status = "disabled";
 		};
 
 		oppturbo@720000000 {
@@ -61,7 +61,7 @@
 		};
 
 		oppnitro@1000000000 {
-			status = "okay";
+			status = "disabled";
 		};
 	};
 
