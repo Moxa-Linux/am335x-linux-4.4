@@ -94,6 +94,11 @@
 			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+		led4 {
+			label = "uc2100:USER";
+			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
 	};
 
 	buttons: push_button {
