@@ -44,13 +44,13 @@
 #else
 #include <linux/usb/serial.h>
 #endif
-#include <config/usb/serial/mxu11x0.h>
-#include <config/usb/serial/mxu1110_fw.h>
-#include <config/usb/serial/mxu1130_fw.h>
-#include <config/usb/serial/mxu1131_fw.h>
-#include <config/usb/serial/mxu1150_fw.h>
-#include <config/usb/serial/mxu1151_fw.h>
-#include <config/usb/serial/mxu3001_fw.h>
+#include <linux/usb/serial/mxu11x0.h>
+#include <linux/usb/serial/mxu1110_fw.h>
+#include <linux/usb/serial/mxu1130_fw.h>
+#include <linux/usb/serial/mxu1131_fw.h>
+#include <linux/usb/serial/mxu1150_fw.h>
+#include <linux/usb/serial/mxu1151_fw.h>
+#include <linux/usb/serial/mxu3001_fw.h>
 
 /* Defines */
 
