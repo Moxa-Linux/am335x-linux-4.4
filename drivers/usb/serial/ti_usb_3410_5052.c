@@ -83,11 +83,13 @@
 
 /* Moxa UPORT 11x0 vendor and product IDs */
 #define MXU1_VENDOR_ID				0x110a
+#define MXU1_TI_VENDOR_ID			0x0451
 #define MXU1_1110_PRODUCT_ID			0x1110
 #define MXU1_1130_PRODUCT_ID			0x1130
 #define MXU1_1150_PRODUCT_ID			0x1150
 #define MXU1_1151_PRODUCT_ID			0x1151
 #define MXU1_1131_PRODUCT_ID			0x1131
+#define MXU1_TI_PRODUCT_ID			0x3410
 
 /* Commands */
 #define TI_GET_VERSION			0x01
@@ -419,6 +421,7 @@ static const struct usb_device_id ti_id_table_3410[] = {
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1131_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1150_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1151_PRODUCT_ID) },
+	{ USB_DEVICE(MXU1_TI_VENDOR_ID, MXU1_TI_PRODUCT_ID) },
 	{ }	/* terminator */
 };
 
@@ -457,6 +460,7 @@ static const struct usb_device_id ti_id_table_combined[] = {
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1131_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1150_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1151_PRODUCT_ID) },
+	{ USB_DEVICE(MXU1_TI_VENDOR_ID, MXU1_TI_PRODUCT_ID) },
 	{ }	/* terminator */
 };
 
@@ -1414,7 +1418,7 @@ static void ti_interrupt_callback(struct urb *urb)
 	switch (function) {
 	case TI_CODE_DATA_ERROR:
 		dgprintk(RAW_DEBUG_LEVEL, "code data error !\n");
-		dev_err(dev, "%s - DATA ERROR, port %d, data 0x%02X\n",
+		dev_warn(dev, "%s - DATA ERROR, port %d, data 0x%02X\n",
 			__func__, port_number, data[1]);
 		break;
 
@@ -2076,7 +2080,7 @@ static int ti_download_firmware(struct ti_device *tdev)
 	char buf[32];
 
 	dgprintk(NORMAL_DEBUG_LEVEL, "\n");
-	if (le16_to_cpu(dev->descriptor.idVendor) == MXU1_VENDOR_ID) {
+	if ((le16_to_cpu(dev->descriptor.idVendor) == MXU1_VENDOR_ID) || (le16_to_cpu(dev->descriptor.idVendor) == MXU1_TI_VENDOR_ID)) {
 		snprintf(buf,
 			sizeof(buf),
 			"moxa/moxa-%04x.fw",
