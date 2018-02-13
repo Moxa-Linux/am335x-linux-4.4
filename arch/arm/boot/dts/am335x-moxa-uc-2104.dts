@@ -43,7 +43,7 @@
 		};
 
 		opp120@720000000 {
-			status = "okay";
+			status = "disabled";
 		};
 
 		oppturbo@720000000 {
@@ -55,7 +55,7 @@
 		};
 
 		oppnitro@1000000000 {
-			status = "okay";
+			status = "disabled";
 		};
 	};
 
@@ -92,6 +92,11 @@
 		led3 {
 			label = "uc2100:SIGNAL3";
 			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+		led4 {
+			label = "uc2100:USER";
+			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 	};
