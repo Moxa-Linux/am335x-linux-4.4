@@ -147,3 +147,7 @@
 	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 };
+
+&usbphy {
+	status = "okay";
+};
