@@ -91,45 +91,50 @@
 		};
 
 		led@2 {
-			label = "uc3100:CELL_SIG_1";
-			gpios = <&gpio_xten0 8 0>;
+			label = "uc3100:CELL";
+			gpios = <&gpio_xten0 8 1>;
 			default-state = "off";
 		};
 
 		led@3 {
-			label = "uc3100:CELL_SIG_2";
-			gpios = <&gpio_xten0 9 0>;
+			label = "uc3100:CELL_SIG_1";
+			gpios = <&gpio_xten0 9 1>;
 			default-state = "off";
 		};
 
 		led@4 {
-			label = "uc3100:CELL_SIG_3";
-			gpios = <&gpio_xten0 10 0>;
+			label = "uc3100:CELL_SIG_2";
+			gpios = <&gpio_xten0 10 1>;
 			default-state = "off";
 		};
+
 		led@5 {
-			label = "uc3100:CELL_SIG_4";
-			gpios = <&gpio_xten0 11 0>;
+			label = "uc3100:CELL_SIG_3";
+			gpios = <&gpio_xten0 11 1>;
 			default-state = "off";
 		};
+
 		led@6 {
-			label = "uc3100:WIFI_SIG_1";
-			gpios = <&gpio_xten0 12 0>;
+			label = "uc3100:WIFI";
+			gpios = <&gpio_xten0 12 1>;
 			default-state = "off";
 		};
+
 		led@7 {
-			label = "uc3100:WIFI_SIG_2";
-			gpios = <&gpio_xten0 13 0>;
+			label = "uc3100:WIFI_SIG_1";
+			gpios = <&gpio_xten0 13 1>;
 			default-state = "off";
 		};
+
 		led@8 {
-			label = "uc3100:WIFI_SIG_3";
-			gpios = <&gpio_xten0 14 0>;
+			label = "uc3100:WIFI_SIG_2";
+			gpios = <&gpio_xten0 14 1>;
 			default-state = "off";
 		};
+
 		led@9 {
-			label = "uc3100:WIFI_SIG_4";
-			gpios = <&gpio_xten0 15 0>;
+			label = "uc3100:WIFI_SIG_3";
+			gpios = <&gpio_xten0 15 1>;
 			default-state = "off";
 		};
 	};
