@@ -546,9 +546,7 @@
 };
 
 &dcan1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&dcan1_default>;
-	status = "okay";
+	status = "disable";
 };
 
 &sham {
