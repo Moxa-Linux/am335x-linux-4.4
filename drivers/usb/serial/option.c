@@ -565,6 +565,14 @@ static void option_instat_callback(struct urb *urb);
 #define RSVD(ifnum)	((BIT(ifnum) & 0xff) << 0)
 
 
+static const struct option_blacklist_info YUGA_9X07_blacklist = {
+	.reserved = BIT(0) | BIT(1) | BIT(4),
+};
+
+static const struct option_blacklist_info YUGA_9X07_blacklist = {
+	.reserved = BIT(0) | BIT(1) | BIT(4),
+};
+
 static const struct usb_device_id option_ids[] = {
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_RICOLA) },
@@ -1073,6 +1081,9 @@ static const struct usb_device_id option_ids[] = {
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x0023)}, /* ONYX 3G device */
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9000), /* SIMCom SIM5218 */
 	  .driver_info = NCTRL(0) | NCTRL(1) | NCTRL(2) | NCTRL(3) | RSVD(4) },
+	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9025)}, /* YUGA CLM920-CN3 */
+	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9625),
+	  .driver_info=(kernel_ulong_t)&YUGA_9X07_blacklist},
 	/* Quectel products using Qualcomm vendor ID */
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC15)},
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC20),
