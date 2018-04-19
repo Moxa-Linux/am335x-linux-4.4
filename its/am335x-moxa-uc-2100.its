@@ -1,0 +1,92 @@
+/*
+ * U-Boot itb image source file for "uc2100 project"
+ */
+
+/dts-v1/;
+
+/ {
+	description = "U-Boot itb image source file for uc2100 project";
+	#address-cells = <1>;
+	
+	images {
+		kernel@uc2100 {
+			description = "Moxa UC2100 Series Unify Linux Kernel";
+			data = /incbin/("../arch/arm/boot/zImage");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			load = <0x80080000>;
+			entry = <0x80080000>;
+		};
+		fdt@uc2101 {
+			description = "Flattened Device Tree blob for UC2101";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-2101.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc2102 {
+			description = "Flattened Device Tree blob for UC2102";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-2102.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc2104 {
+			description = "Flattened Device Tree blob for UC2104";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-2104.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc2111 {
+			description = "Flattened Device Tree blob for UC2111";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-2111.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc2112 {
+			description = "Flattened Device Tree blob for UC2112";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-2112.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+	};
+	
+	configurations {
+		default = "uc2101";
+		uc2101 {
+			description = "Boot Linux kernel with uc2101 FDT blob";
+			kernel = "kernel@uc2100";
+			fdt = "fdt@uc2101";
+		};
+		uc2102 {
+			description = "Boot Linux kernel with uc2102 FDT blob";
+			kernel = "kernel@uc2100";
+			fdt = "fdt@uc2102";
+		};
+		uc2104 {
+			description = "Boot Linux kernel with uc2104 FDT blob";
+			kernel = "kernel@uc2100";
+			fdt = "fdt@uc2104";
+		};
+		uc2111 {
+			description = "Boot Linux kernel with uc2111 FDT blob";
+			kernel = "kernel@uc2100";
+			fdt = "fdt@uc2111";
+		};
+		uc2112 {
+			description = "Boot Linux kernel with uc2112 FDT blob";
+			kernel = "kernel@uc2100";
+			fdt = "fdt@uc2112";
+		};
+	};
+};
