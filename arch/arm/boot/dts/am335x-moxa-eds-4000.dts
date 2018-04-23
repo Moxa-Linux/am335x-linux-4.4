@@ -243,7 +243,6 @@
 	bus-width = <4>;
 	pinctrl-0 = <&mmc0_pins_default>;
 	cd-gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
-//	wp-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 };
 
