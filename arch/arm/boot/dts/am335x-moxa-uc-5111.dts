@@ -85,25 +85,25 @@
 	leds {
 		compatible = "gpio-leds";
 		led@1 {
-			label = "uc5100:SGN1";
+			label = "UC5100:YELLOW:SGN1";
 			gpios = <&gpio_xten 8 0>;
 			default-state = "off";
 		};
 
 		led@2 {
-			label = "uc5100:SGN2";
+			label = "UC5100:YELLOW:SGN2";
 			gpios = <&gpio_xten 9 0>;
 			default-state = "off";
 		};
 
 		led@3 {
-			label = "uc5100:SGN3";
+			label = "UC5100:YELLOW:SGN3";
 			gpios = <&gpio_xten 10 0>;
 			default-state = "off";
 		};
 
 		led@4 {
-			label = "uc5100:SYS";
+			label = "UC5100:YELLOW:SYS";
 			gpios = <&gpio3 9 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
