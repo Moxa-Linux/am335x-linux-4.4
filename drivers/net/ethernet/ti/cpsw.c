@@ -883,11 +883,7 @@ static void _cpsw_adjust_link(struct cpsw_slave *slave,
 			mac_control |= BIT(15);
 
 		/* in band mode only works in 10Mbps RGMII mode */
-		else if ((phy->speed == 10) &&
-			 ((phy->interface == PHY_INTERFACE_MODE_RGMII) ||
-			 (phy->interface == PHY_INTERFACE_MODE_RGMII_ID) ||
-			 (phy->interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
-			 (phy->interface == PHY_INTERFACE_MODE_RGMII_TXID)))
+		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
 			mac_control |= BIT(18); /* In Band mode */
 
 		if (priv->rx_pause)
