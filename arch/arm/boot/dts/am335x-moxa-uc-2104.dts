@@ -17,48 +17,6 @@
 	model = "Moxa UC-2104";
 	compatible = "moxa,uc-2104", "ti,am33xx";
 
-	cpu0_opp_table: opp_table0 {
-		opp50@300000000 {
-			status = "okay";
-		};
-
-		opp100@275000000 {
-			status = "disabled";
-		};
-
-		opp100@300000000 {
-			status = "disabled";
-		};
-
-		opp100@500000000 {
-			status = "disabled";
-		};
-
-		opp100@600000000 {
-			status = "okay";
-		};
-
-		opp120@600000000 {
-			status = "disabled";
-		};
-
-		opp120@720000000 {
-			status = "disabled";
-		};
-
-		oppturbo@720000000 {
-			status = "disabled";
-		};
-
-		oppturbo@800000000 {
-			status = "disabled";
-		};
-
-		oppnitro@1000000000 {
-			status = "disabled";
-		};
-	};
-
 	memory {
 		device_type = "memory";
 		reg = <0x80000000 0x10000000>; /* 256 MB */
@@ -80,22 +38,22 @@
 	leds {
 		compatible = "gpio-leds";
 		led1 {
-			label = "uc2100:SIGNAL1";
+			label = "UC2100:YELLOW:SGN1";
 			gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 		led2 {
-			label = "uc2100:SIGNAL2";
+			label = "UC2100:YELLOW:SGN2";
 			gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 		led3 {
-			label = "uc2100:SIGNAL3";
+			label = "UC2100:YELLOW:SGN3";
 			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 		led4 {
-			label = "uc2100:USER";
+			label = "UC2100:GREEN:USER";
 			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
