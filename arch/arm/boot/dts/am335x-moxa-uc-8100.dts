@@ -101,35 +101,35 @@
 		compatible = "gpio-leds";
 
 		led@1 {
-			label = "uc81xx:CEL1";
+			label = "UC8100:GREEN:CEL3";
 			gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 
 		led@2 {
-			label = "uc81xx:CEL2";
+			label = "UC8100:YELLOW:CEL2";
 			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 
 		led@3 {
-			label = "uc81xx:CEL3";
+			label = "UC8100:RED:CEL1";
 			gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 
 		led@4 {
-			label = "uc81xx:DIA1";
+			label = "UC8100:GREEN:DIA3";
 			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 		led@5 {
-			label = "uc81xx:DIA2";
+			label = "UC8100:YELLOW:DIA2";
 			gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 		led@6 {
-			label = "uc81xx:DIA3";
+			label = "UC8100:RED:DIA1";
 			gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
