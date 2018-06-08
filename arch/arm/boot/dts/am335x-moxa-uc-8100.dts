@@ -134,17 +134,17 @@
 			default-state = "off";
 		};
 		led@7 {
-			label = "uc81xx:ZIG";
+			label = "UC8100:GREEN:ZIG";
 			gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 		led@8 {
-			label = "uc81xx:SD";
+			label = "UC8100:GREEN:SD";
 			gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 		led@9 {
-			label = "uc81xx:USB";
+			label = "UC8100:GREEN:USB";
 			gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
