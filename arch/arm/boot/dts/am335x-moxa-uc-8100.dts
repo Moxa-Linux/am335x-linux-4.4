@@ -9,8 +9,6 @@
 /dts-v1/;
 
 #include "am33xx.dtsi"
-#include <dt-bindings/pwm/pwm.h>
-#include <dt-bindings/interrupt-controller/irq.h>
 
 / {
 	model = "MOXA UC-8100";
@@ -84,18 +82,6 @@
 	      regulator-boot-on;
 	};
 
-	wlan_en_regulator: fixedregulator@2 {
-		compatible = "regulator-fixed";
-		regulator-name = "wlan_en_regulator";
-		regulator-min-microvolt = <1800000>;
-		regulator-max-microvolt = <1800000>;
-		startup-delay-us = <70000>;
-
-		/* WLAN_EN GPIO for this board */
-		gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-	};
-
 	leds {
 		//pinctrl-0 = <&user_leds_s0>;
 		compatible = "gpio-leds";
@@ -160,20 +146,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&minipcie_pins>;
 
-//	user_leds_s0: user_leds_s0 {
-//		pinctrl-single,pins = <
-//			0x10 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_ad4.gpio1_4 */
-//			0x14 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_ad5.gpio1_5 */
-//			0x18 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_ad6.gpio1_6 */
-//			0x30 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)   /* gpmc_ad12.gpio1_12 */
-//			0x34 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)   /* gpmc_ad13.gpio1_13 */
-//			0x38 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)   /* gpmc_ad14.gpio1_14 */
-//			0x90 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_advn_ale.gpio2_2 */
-//			0x94 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_oen_ren.gpio2_3 */
-//			0x98 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_oen_ren.gpio2_4 */
-//		>;
-//	};
-	
 	minipcie_pins: pinmux_minipcie {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x8e0 ,PIN_OUTPUT_PULLUP | MUX_MODE7)	/* lcd_vsync.gpio2_22  Power off PIN*/
