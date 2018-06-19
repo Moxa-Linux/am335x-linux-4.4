@@ -88,50 +88,50 @@
 	leds {
 		compatible = "gpio-leds";
 		led@1 {
-			label = "uc8100me:CEL1";
+			label = "UC8100ME:RED:CEL1";
 			gpios = <&gpio_xten 8 0>;
 			default-state = "off";
 		};
 
 		led@2 {
-			label = "uc8100me:CEL2";
+			label = "UC8100ME:YELLOW:CEL2";
 			gpios = <&gpio_xten 9 0>;
 			default-state = "off";
 		};
 
 		led@3 {
-			label = "uc8100me:CEL3";
+			label = "UC8100ME:GREEN:CEL3";
 			gpios = <&gpio_xten 10 0>;
 			default-state = "off";
 		};
 
 		led@4 {
-			label = "uc8100me:DIA1";
+			label = "UC8100ME:RED:DIA1";
 			gpios = <&gpio_xten 11 0>;
 			default-state = "off";
 		};
 		led@5 {
-			label = "uc8100me:DIA2";
+			label = "UC8100ME:YELLOW:DIA2";
 			gpios = <&gpio_xten 12 0>;
 			default-state = "off";
 		};
 		led@6 {
-			label = "uc8100me:DIA3";
+			label = "UC8100ME:GREEN:DIA3";
 			gpios = <&gpio_xten 13 0>;
 			default-state = "off";
 		};
 		led@7 {
-			label = "uc8100me:SD";
+			label = "UC8100ME:GREEN:SD";
 			gpios = <&gpio_xten 14 0>;
 			default-state = "off";
 		};
 		led@8 {
-			label = "uc8100me:USB";
+			label = "UC8100ME:GREEN:USB";
 			gpios = <&gpio_xten 15 0>;
 			default-state = "off";
 		};
 		led@9 {
-			label = "uc8100me:USER";
+			label = "UC8100ME:GREEN:USER";
 			gpios = <&gpio0 20 0>;
 			default-state = "off";
 		};
