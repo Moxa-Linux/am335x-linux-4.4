@@ -58,7 +58,8 @@ void __init rcar_gen2_timer_init(void)
 	int extal_mhz = 0;
 	u32 freq;
 
-	if (of_machine_is_compatible("renesas,r8a7794")) {
+	if (of_machine_is_compatible("renesas,r8a7745") ||
+	    of_machine_is_compatible("renesas,r8a7794")) {
 		freq = 260000000 / 8;	/* ZS / 8 */
 		/* CNTVOFF has to be initialized either from non-secure
 		 * Hypervisor mode or secure Monitor mode with SCR.NS==1.
