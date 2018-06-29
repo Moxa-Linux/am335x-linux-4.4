@@ -301,6 +301,7 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
 static u32 cpg_mode __initdata;
 
 static const char * const pll0_mult_match[] = {
+	"renesas,r8a7745-cpg-clocks",
 	"renesas,r8a7792-cpg-clocks",
 	"renesas,r8a7794-cpg-clocks",
 	NULL
