@@ -545,10 +545,6 @@
 	status = "okay";
 };
 
-&dcan1 {
-	status = "disable";
-};
-
 &sham {
 	status = "okay";
 };
