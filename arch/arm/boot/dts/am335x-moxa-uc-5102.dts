@@ -84,6 +84,7 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led@1 {
 			label = "UC5100:YELLOW:SGN1";
 			gpios = <&gpio_xten 8 0>;

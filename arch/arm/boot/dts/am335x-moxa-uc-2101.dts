@@ -37,6 +37,7 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1 {
 			label = "UC2100:GREEN:USER";
 			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;

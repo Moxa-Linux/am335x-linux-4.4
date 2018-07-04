@@ -43,11 +43,13 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1 {
 			label = "UC2100:GREEN:USER1";
 			gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+
 		led2 {
 			label = "UC2100:GREEN:USER2";
 			gpios = <&gpio3 17 GPIO_ACTIVE_HIGH>;
