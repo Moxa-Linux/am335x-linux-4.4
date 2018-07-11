@@ -195,7 +195,7 @@
 			AM33XX_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* uart1_txd.uart1_txd */
 		>;
 	};
-	
+
 	uart3_pins: pinmux_uart3_pins {
 		/* MCU FWR Upgrade */
 		pinctrl-single,pins = <
@@ -209,14 +209,14 @@
 			AM33XX_IOPAD(0x920, PIN_INPUT_PULLUP | MUX_MODE1)	/* mii1_txd2.dcan0_rx */
 			AM33XX_IOPAD(0x91c, PIN_OUTPUT_PULLDOWN | MUX_MODE1) 	/* mii1_txd1.dcan0_tx */
 		>;
-	};	
+	};
 
 	dcan1_default: dcan1_default_pins {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x900, PIN_OUTPUT_PULLDOWN | MUX_MODE4)	/* mmc0_clk.dcan1_tx */
 			AM33XX_IOPAD(0x904, PIN_INPUT_PULLUP | MUX_MODE4) 	/* mmc0_cmd.dcan1_rx */
 		>;
-	};	
+	};
 
 	cpsw_default: cpsw_default {
 		pinctrl-single,pins = <
@@ -293,7 +293,7 @@
 			AM33XX_IOPAD(0x888, PIN_INPUT_PULLUP | MUX_MODE3) 	/* gpmc_csn3.mmc2_cmd */
 			AM33XX_IOPAD(0x88c, PIN_INPUT_PULLUP | MUX_MODE3) 	/* gpmc_clk.mmc2_clk */
 		>;
-	};	
+	};
 
 	sdio_sleep: sdio_sleep_pins {
 		pinctrl-single,pins = <
@@ -304,7 +304,7 @@
 			AM33XX_IOPAD(0x888, PIN_INPUT_PULLDOWN | MUX_MODE7) 	/* gpmc_csn3.mmc2_cmd */
 			AM33XX_IOPAD(0x88c, PIN_INPUT_PULLDOWN | MUX_MODE7) 	/* gpmc_clk.mmc2_clk */
 		>;
-	};	
+	};
 
 	/* wl12xx/wl18xx card enable/irq GPIOs. */
 	wlan_pins_default: pinmux_wlan_pins_default {
@@ -317,7 +317,7 @@
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7)	/* spi0_cs1.gpio0_6 */
 		>;
-	};	
+	};
 };
 
 &uart0 {
@@ -364,7 +364,7 @@
 		compatible = "dallas,ds1374";
 		reg = <0x68>;
 	};
-	
+
 	gpio_xten: gpio_xten@27 {
 		compatible = "nxp,pca9535";
 		gpio-controller;
@@ -535,7 +535,7 @@
 
 &phy_sel {
 	reg= <0x44e10650 0xf5>;
-        rmii-clock-ext;
+	rmii-clock-ext;
 };
 
 
@@ -594,9 +594,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -613,7 +613,7 @@
 				label = "U-Boot Env";
 				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 
@@ -630,10 +630,10 @@
 
 &mmc3 {
 	/* these are on the crossbar and are outlined in the
-           xbar-event-map element */
-        dmas = <&edma_xbar 12 0 1
+		xbar-event-map element */
+	dmas = <&edma_xbar 12 0 1
 		&edma_xbar 13 0 2>;
-        dma-names = "tx", "rx";
+	dma-names = "tx", "rx";
 
 	status = "okay";
 	vmmc-supply = <&wlan_en_regulator>;
