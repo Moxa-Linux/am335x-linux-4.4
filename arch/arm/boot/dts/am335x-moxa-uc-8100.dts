@@ -178,7 +178,7 @@
 			AM33XX_IOPAD(0x8fc ,PIN_INPUT_PULLUP | MUX_MODE0)	/* mmc0_dat0 */
 			AM33XX_IOPAD(0x900 ,PIN_INPUT_PULLUP | MUX_MODE0)	/* mmc0_clk */
 			AM33XX_IOPAD(0x904 ,PIN_INPUT_PULLUP | MUX_MODE0)	/* mmc0_cmd */
-			AM33XX_IOPAD(0x92C, PIN_INPUT_PULLUP | MUX_MODE3)       /* mmi1_tx_clk.mmc0_data7 */                        
+			AM33XX_IOPAD(0x92C, PIN_INPUT_PULLUP | MUX_MODE3) 	/* mmi1_tx_clk.mmc0_data7 */
 			AM33XX_IOPAD(0x938, PIN_INPUT_PULLUP | MUX_MODE3) 	/* mii1_rxd2.mmc_data4 */
 			AM33XX_IOPAD(0x934, PIN_INPUT_PULLUP | MUX_MODE3)	/* mii1_rxd3.mmc_data5 */
 			AM33XX_IOPAD(0x930, PIN_INPUT_PULLUP | MUX_MODE3)	/* mii_rxclk.mmc_data6 */
@@ -212,7 +212,7 @@
 			/*AM33XX_IOPAD(0x88c ,PIN_INPUT_PULLUP | MUX_MODE3)	/* gpmc_clk.mmc2_clk */
 		>;
 	};
-	
+
 	spi0_pins: pinmux_spi0 {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x950, PIN_INPUT_PULLUP | MUX_MODE0)       /* spi0_sclk.spi0_sclk */
@@ -224,13 +224,13 @@
 
 	spi1_pins: pinmux_spi1 {
 		pinctrl-single,pins = <
- 			AM33XX_IOPAD(0x964, PIN_INPUT_PULLUP | MUX_MODE4)       /* ecap0_in_pwm0_out.spi1_sclk */
+		AM33XX_IOPAD(0x964, PIN_INPUT_PULLUP | MUX_MODE4)       /* ecap0_in_pwm0_out.spi1_sclk */
 			AM33XX_IOPAD(0x978, PIN_INPUT_PULLUP | MUX_MODE4)       /* uart1_ctsn.spi1_cs0 */
 			AM33XX_IOPAD(0x968, PIN_INPUT_PULLUP | MUX_MODE4)       /* uart0_ctsn.spi1_d0 */
 			AM33XX_IOPAD(0x96c, PIN_INPUT_PULLUP | MUX_MODE4)       /* uart0_rtsn.spi1_d1 */
 		>;
 	};
-	
+
 	tpm_pins: pinmux_tpm {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x8d0, PIN_OUTPUT_PULLUP | MUX_MODE7)	/* lcd_data12.gpio0_8 */
@@ -426,7 +426,7 @@
 
 &phy_sel {
 	reg= <0x44e10650 0xf5>;
-        rmii-clock-ext;
+	rmii-clock-ext;
 };
 
 &sham {
@@ -482,27 +482,27 @@
 	m25p80@0 {
 		compatible = "mx25l6405d";
 		spi-max-frequency = <40000000>;
-		
+
 		reg = <0>;
 		spi-cpol;
 		spi-cpha;
-		
+
 		partitions {
 			compatible = "fixed-partitions";
 			#address-cells = <1>;
 			#size-cells = <1>;
-	
+
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
 				label = "MLO";
 				reg = <0x0 0x80000>;
 			};
-		
+
 			partitions@1 {
 				label = "U-Boot";
 				reg = <0x80000 0x100000>;
 			};
-			
+
 			partitions@2 {
 				label = "U-Boot Env";
 				reg = <0x180000 0x40000>;
@@ -512,14 +512,14 @@
 };
 
 &spi1{
-        status = "okay";
-        pinctrl-names = "default";
-        pinctrl-0 = <&spi1_pins>;
-        tpm_spi_tis@0{
-                compatible = "tcg,tpm_spi_tis";
-                reg = <0>;
-                spi-max-frequency = <500000>;
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi1_pins>;
+	tpm_spi_tis@0{
+		compatible = "tcg,tpm_spi_tis";
+		reg = <0>;
+		spi-max-frequency = <500000>;
 		pinctrl-0 = <&tpm_pins>;
-        };
+	};
 };
 
