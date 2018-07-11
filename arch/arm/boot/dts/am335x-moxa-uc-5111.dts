@@ -84,6 +84,7 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led@1 {
 			label = "UC5100:YELLOW:SGN1";
 			gpios = <&gpio_xten 8 0>;
@@ -129,7 +130,7 @@
 			AM33XX_IOPAD(0x98c, PIN_INPUT_PULLUP | MUX_MODE0)    /* i2c0_scl.i2c0_scl */
 		>;
 	};
-	
+
 	i2c2_pins: pinmux_i2c2_pins {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x978, PIN_INPUT_PULLUP | MUX_MODE3)	/* uart1_ctsn.i2c2_sda */
@@ -150,14 +151,14 @@
 			AM33XX_IOPAD(0x920, PIN_INPUT_PULLUP | MUX_MODE1)	/* mii1_txd2.dcan0_rx */
 			AM33XX_IOPAD(0x91C, PIN_OUTPUT_PULLDOWN | MUX_MODE1) 	/* mii1_txd3.dcan0_tx */
 		>;
-	};	
+	};
 
 	dcan1_default: dcan1_default_pins {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x984, PIN_INPUT_PULLUP | MUX_MODE2) 	/* uart1_txd.dcan1_rx */
 			AM33XX_IOPAD(0x980, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* uart1_rxd.dcan1_tx */
 		>;
-	};	
+	};
 
 	cpsw_default: cpsw_default {
 		pinctrl-single,pins = <
@@ -273,11 +274,11 @@
 	clock-frequency = <400000>;
 
 	gpio_xten_uart: gpio_xten_uart@20 {
-                compatible = "nxp,pca9535";
-                gpio-controller;
-                #gpio-cells = <2>;
-                reg = <0x20>;
-        };
+		compatible = "nxp,pca9535";
+		gpio-controller;
+		#gpio-cells = <2>;
+		reg = <0x20>;
+	};
 
 	gpio_xten: gpio_xten@21 {
 		compatible = "nxp,pca9535";
@@ -435,7 +436,7 @@
 
 &phy_sel {
 	reg= <0x44e10650 0xf5>;
-        rmii-clock-ext;
+	rmii-clock-ext;
 };
 
 &dcan0 {
@@ -463,13 +464,13 @@
 };
 
 &mmc1 {
-        pinctrl-names = "default";
-        vmmc-supply = <&vmmcsd_fixed>;
-        bus-width = <4>;
-        pinctrl-0 = <&mmc0_pins_default>;
-        cd-gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
-        wp-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
-        status = "okay";
+	pinctrl-names = "default";
+	vmmc-supply = <&vmmcsd_fixed>;
+	bus-width = <4>;
+	pinctrl-0 = <&mmc0_pins_default>;
+	cd-gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
+	wp-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
+	status = "okay";
 };
 
 &mmc2 {
@@ -509,9 +510,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -528,7 +529,7 @@
 				label = "U-Boot Env";
 				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 
