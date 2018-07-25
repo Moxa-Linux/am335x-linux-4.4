@@ -30,6 +30,8 @@
 		spi1 = &msiof0;
 		spi2 = &msiof1;
 		spi3 = &msiof2;
+		vin0 = &vin0;
+		vin1 = &vin1;
 	};
 
 	/* External CAN clock */
@@ -874,6 +876,26 @@
 				 <&cpg_clocks R8A7745_CLK_RCAN>,
 				 <&can_clk>;
 			clock-names = "clkp1", "clkp2", "can_clk";
+			power-domains = <&cpg_clocks>;
+			status = "disabled";
+		};
+
+		vin0: video@e6ef0000 {
+			compatible = "renesas,vin-r8a7745",
+				     "renesas,rcar-gen2-vin";
+			reg = <0 0xe6ef0000 0 0x1000>;
+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&mstp8_clks R8A7745_CLK_VIN0>;
+			power-domains = <&cpg_clocks>;
+			status = "disabled";
+		};
+
+		vin1: video@e6ef1000 {
+			compatible = "renesas,vin-r8a7745",
+				     "renesas,rcar-gen2-vin";
+			reg = <0 0xe6ef1000 0 0x1000>;
+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&mstp8_clks R8A7745_CLK_VIN1>;
 			power-domains = <&cpg_clocks>;
 			status = "disabled";
 		};
