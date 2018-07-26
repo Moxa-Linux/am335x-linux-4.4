@@ -17,6 +17,8 @@
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
 #include <linux/watchdog.h>
+#include <linux/notifier.h>
+#include <linux/reboot.h>
 
 #define RWTCNT		0
 #define RWTCSRA		4
@@ -51,6 +53,7 @@ struct rwdt_priv {
 	unsigned long clk_rate;
 	u16 time_left;
 	u8 cks;
+	struct notifier_block restart_handler;
 };
 
 static void rwdt_write(struct rwdt_priv *priv, u32 val, unsigned int reg)
@@ -112,6 +115,18 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
 	u16 val = readw_relaxed(priv->base + RWTCNT);
 
 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+}
+
+static int rwdt_restart(struct notifier_block *this, unsigned long mode,
+			void *cmd)
+{
+	struct rwdt_priv *priv = container_of(this, struct rwdt_priv,
+					      restart_handler);
+
+	rwdt_start(&priv->wdev);
+	rwdt_write(priv, 0xffff, RWTCNT);
+
+	return NOTIFY_DONE;
 }
 
 static const struct watchdog_info rwdt_ident = {
@@ -194,6 +209,15 @@ static int rwdt_probe(struct platform_device *pdev)
 	if (ret < 0)
 		goto out_pm_disable;
 
+	priv->restart_handler.notifier_call = rwdt_restart;
+	priv->restart_handler.priority = 0;
+	ret = register_restart_handler(&priv->restart_handler);
+	if (ret) {
+		dev_err(&pdev->dev, "can't register restart handler (err=%d)\n",
+			ret);
+		priv->restart_handler.notifier_call = NULL;
+	}
+
 	return 0;
 
  out_pm_disable:
@@ -205,6 +229,8 @@ static int rwdt_remove(struct platform_device *pdev)
 {
 	struct rwdt_priv *priv = platform_get_drvdata(pdev);
 
+	if (priv->restart_handler.notifier_call)
+		unregister_restart_handler(&priv->restart_handler);
 	watchdog_unregister_device(&priv->wdev);
 	pm_runtime_disable(&pdev->dev);
 
