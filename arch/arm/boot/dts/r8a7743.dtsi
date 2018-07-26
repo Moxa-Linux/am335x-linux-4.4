@@ -1289,10 +1289,13 @@
 				compatible = "renesas,r8a7743-mstp-clocks",
 					     "renesas,cpg-mstp-clocks";
 				reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
-				clocks = <&cp_clk>;
+				clocks = <&rclk_clk>, <&cp_clk>, <&zs_clk>;
 				#clock-cells = <1>;
-				clock-indices = <R8A7743_CLK_IRQC>;
-				clock-output-names = "irqc";
+				clock-indices = <
+					R8A7743_CLK_RWDT R8A7743_CLK_IRQC
+					R8A7743_CLK_INTC_SYS
+				>;
+				clock-output-names = "rwdt", "irqc", "intc-sys";
 			};
 			mstp5_clks: mstp5_clks@e6150144 {
 				compatible = "renesas,r8a7743-mstp-clocks",
