@@ -19,6 +19,7 @@
 #include <linux/of_address.h>
 #include <linux/slab.h>
 #include <linux/spinlock.h>
+#include <linux/soc/renesas/rcar-rst.h>
 
 struct rcar_gen2_cpg {
 	struct clk_onecell_data data;
@@ -442,4 +443,6 @@ void __init rcar_gen2_clocks_init(u32 mode)
 	cpg_mode = mode;
 
 	of_clk_init(NULL);
+
+	rcar_rst_init();
 }
