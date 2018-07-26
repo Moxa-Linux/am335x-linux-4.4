@@ -195,7 +195,6 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
 {
 	/* install boot code shared by all CPUs */
 	shmobile_smp_apmu_setup_boot();
-	shmobile_boot_arg = MPIDR_HWID_BITMASK;
 
 	/* perform per-cpu setup */
 	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
