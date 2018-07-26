@@ -90,6 +90,11 @@
 			cpus = <&cpu0 &cpu1>;
 		};
 
+		rst: reset-controller@e6160000 {
+			compatible = "renesas,r8a7743-rst";
+			reg = <0 0xe6160000 0 0x100>;
+		};
+
 		gic: interrupt-controller@f1001000 {
 			compatible = "arm,gic-400";
 			#interrupt-cells = <3>;
