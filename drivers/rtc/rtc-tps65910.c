@@ -285,6 +285,12 @@ static int tps65910_rtc_probe(struct platform_device *pdev)
 		return ret;
 	}
 
+	/*
+	 * Don't enable UIE function because we don't have the PIN
+	 * on UC8100 device.
+	 */
+	tps_rtc->rtc->uie_unsupported = 1;
+
 	return 0;
 }
 
