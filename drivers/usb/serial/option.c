@@ -573,6 +573,10 @@ static const struct option_blacklist_info YUGA_9X07_blacklist = {
 	.reserved = BIT(0) | BIT(1) | BIT(4),
 };
 
+static const struct option_blacklist_info ublox_r410m_blacklist = {
+	.reserved = BIT(1) | BIT(3),
+};
+
 static const struct usb_device_id option_ids[] = {
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_RICOLA) },
@@ -1084,6 +1088,8 @@ static const struct usb_device_id option_ids[] = {
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9025)}, /* YUGA CLM920-CN3 */
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9625),
 	  .driver_info=(kernel_ulong_t)&YUGA_9X07_blacklist},
+	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x90b2), /* ublox R410M */
+	  .driver_info = (kernel_ulong_t)&ublox_r410m_blacklist },
 	/* Quectel products using Qualcomm vendor ID */
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC15)},
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC20),
