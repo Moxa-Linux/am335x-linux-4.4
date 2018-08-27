@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (C) 2018 MOXA Inc. - https://www.moxa.com/
+ *
+ * Authors: SZ Lin (林上智) <sz.lin@moxa.com>
+ *          Wes Huang (黃淵河) <wes.huang@moxa.com>
+ *          Fero JD Zhou (周俊達) <FeroJD.Zhou@moxa.com>
+ */
+
+#include "am335x-moxa-uc-2114.dts"
+
+/ {
+	model = "Moxa UC-2116";
+	compatible = "moxa,uc-2116", "ti,am33xx";
+};
+
+&am33xx_pinmux {
+	pinctrl-names = "default";
+
+	gps_pins: gps_default_pins {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x8c4, PIN_INPUT_PULLUP | MUX_MODE4)	/* lcd_data9.uart5_rxd */
+			AM33XX_IOPAD(0x8c0, PIN_OUTPUT_PULLDOWN | MUX_MODE4)	/* lcd_data8.uart5_txd */
+		>;
+	};
+};
+
+&uart5 {
+	/* GPS */
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&gps_pins>;
+};
