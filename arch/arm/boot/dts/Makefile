@@ -468,6 +468,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
 	am335x-chiliboard.dtb \
 	am335x-wega-rdk.dtb \
 	moxa-uc8100.dtb \
+	moxa-uc8100-me.dtb \
 	am335x-moxa-uc-2101.dtb \
 	am335x-moxa-uc-2102.dtb \
 	am335x-moxa-uc-2104.dtb \
