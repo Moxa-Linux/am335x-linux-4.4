@@ -605,6 +605,32 @@ static bool dsps_sw_babble_control(struct musb *musb)
 			session_restart = true;
 		}
 	} else {
+#define USBCTRL_SOFT_RESET 0x01
+#define USBCTRL_SOFT_RESET_ISOLATION 0x20
+		struct device *dev = musb->controller;
+		struct dsps_glue *glue = dev_get_drvdata(dev->parent);
+		const struct dsps_musb_wrapper *wrp = glue->wrp;
+		int rloop;
+		u32 ctrl=dsps_readl(musb->ctrl_base, wrp->control);
+
+		/* reset the USB host */
+		ctrl |= (USBCTRL_SOFT_RESET);
+		dsps_writel(musb->ctrl_base, wrp->control, ctrl);
+
+		/* delay some time wait the reseting finished */
+		for (rloop=0; rloop < 100 &&
+			(dsps_readl(musb->ctrl_base,
+				wrp->control)&USBCTRL_SOFT_RESET);
+			rloop++ ) {
+				udelay(1);
+		}
+
+#if 0	/* FIXME : The USB host IC will be done this ? */
+		/* clear USB host reset isolation */
+		ctrl=dsps_readl(musb->ctrl_base, wrp->control);
+		ctrl &= ~USBCTRL_SOFT_RESET_ISOLATION;
+		dsps_writel(musb->ctrl_base, wrp->control, ctrl);
+#endif
 		session_restart = true;
 	}
 
