@@ -1,33 +1,19 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * Copyright (C) 2017 MOXA Inc. - https://www.moxa.com/
+ * Copyright (C) 2018 MOXA Inc. - https://www.moxa.com/
  *
- * Author: SZ Lin (林上智) <sz.lin@moxa.com>
- * Author: Wes Huang (黃淵河) <wes.huang@moxa.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Authors: SZ Lin (林上智) <sz.lin@moxa.com>
+ *          Wes Huang (黃淵河) <wes.huang@moxa.com>
+ *          Fero JD Zhou (周俊達) <FeroJD.Zhou@moxa.com>
  */
 
 /dts-v1/;
 
-#include "am335x-moxa-uc-21xx.dtsi"
+#include "am335x-moxa-uc-2100-common.dtsi"
 
 / {
 	model = "Moxa UC-2114";
 	compatible = "moxa,uc-2114", "ti,am33xx";
-
-	cpus {
-		cpu@0 {
-			cpu0-supply = <&vdd1_reg>;
-		};
-	};
-
-	memory {
-		device_type = "memory";
-		reg = <0x80000000 0x20000000>; /* 512 MB */
-	};
 
 	leds {
 		compatible = "gpio-leds";
@@ -36,16 +22,19 @@
 			gpios = <&gpio_xten 11 0>;
 			default-state = "off";
 		};
+
 		led_cell_1 {
 			label = "UC2100:GREEN:SGN1";
 			gpios = <&gpio_xten 10 0>;
 			default-state = "off";
 		};
+
 		led_cell_2 {
 			label = "UC2100:GREEN:SGN2";
 			gpios = <&gpio_xten 9 0>;
 			default-state = "off";
 		};
+
 		led_cell_3 {
 			label = "UC2100:GREEN:SGN3";
 			gpios = <&gpio_xten 8 0>;
@@ -250,9 +239,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&davinci_mdio_default>;
 	status = "okay";
-	ti,rx_int_delay = <DP83867_RGMIIDCTL_2_25_NS>;
-	ti,tx_int_delay = <DP83867_RGMIIDCTL_2_75_NS>;
-	ti,fifo_depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
 };
 
 &cpsw_emac0 {
@@ -279,13 +265,13 @@
 	status = "okay";
 };
 
-&dcan0{
+&dcan0 {
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&dcan0_pins>;
 };
 
-&dcan1{
+&dcan1 {
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&dcan1_pins>;

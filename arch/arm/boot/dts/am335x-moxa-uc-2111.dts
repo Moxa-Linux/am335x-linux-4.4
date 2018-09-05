@@ -1,37 +1,22 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * Copyright (C) 2017 MOXA Inc. - https://www.moxa.com/
+ * Copyright (C) 2018 MOXA Inc. - https://www.moxa.com/
  *
- * Author: SZ Lin (林上智) <sz.lin@moxa.com>
- * Author: Wes Huang (黃淵河) <wes.huang@moxa.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Authors: SZ Lin (林上智) <sz.lin@moxa.com>
+ *          Wes Huang (黃淵河) <wes.huang@moxa.com>
+ *          Fero JD Zhou (周俊達) <FeroJD.Zhou@moxa.com>
  */
 
 /dts-v1/;
 
-#include "am335x-moxa-uc-21xx.dtsi"
+#include "am335x-moxa-uc-2100-common.dtsi"
 
 / {
 	model = "Moxa UC-2111";
 	compatible = "moxa,uc-2111", "ti,am33xx";
 
-	cpus {
-		cpu@0 {
-			cpu0-supply = <&vdd1_reg>;
-		};
-	};
-
-	memory {
-		device_type = "memory";
-		reg = <0x80000000 0x20000000>; /* 512 MB */
-	};
-
 	leds {
 		compatible = "gpio-leds";
-
 		led1 {
 			label = "UC2100:GREEN:USER";
 			gpios = <&gpio3 17 GPIO_ACTIVE_HIGH>;
@@ -185,7 +170,6 @@
 		};
 	};
 };
-
 
 &mac {
 	pinctrl-names = "default";
