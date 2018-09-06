@@ -45,30 +45,30 @@
 
 	* UC-2100 series
 		* models: UC-2101-LX, UC-2102-LX, UC-2104-LX, UC-2111-LX, UC-2112-LX, UC-2112-T-LX
-    		* defconfig: uc2100_defconfig
+		* defconfig: uc2100_defconfig
 		* dts: am335x-moxa-uc-2101.dts, am335x-moxa-uc-2102.dts, am335x-moxa-uc-2104.dts, am335x-moxa-uc-2111.dts, am335x-moxa-uc-2112.dts
 		* its: am335x-moxa-uc-2100.its
 
 	* UC-3100 series
 		* models: UC-3101-T-US-LX, UC-3101-T-EU-LX, UC-3101-T-AU-LX, UC-3111-T-US-LX, UC-3111-T-EU-LX, UC-3111-T-AU-LX, UC-3121-T-US-LX, UC-3121-T-EU-LX, UC-3121-T-AU-LX
-    		* defconfig: uc3100_defconfig
+		* defconfig: uc3100_defconfig
 		* dts: am335x-moxa-uc-3101.dts, am335x-moxa-uc-3111.dts, am335x-moxa-uc-3121.dts
 		* its: am335x-moxa-uc-3100.its
 
 	* UC-5100 series
 		* models: UC-5101-LX, UC-5101-T-LX, UC-5102-LX, UC-5102-T-LX, UC-5111-LX, UC-5111-T-LX, UC-5112-LX, UC-5112-T-LX
-    		* defconfig: uc5100_defconfig
+		* defconfig: uc5100_defconfig
 		* dts: am335x-moxa-uc-5101.dts, am335x-moxa-uc-5102.dts, am335x-moxa-uc-5111.dts, am335x-moxa-uc-5112.dts
 		* its: am335x-moxa-uc-5100.its
 
 	* UC-8100-LX series
 		* models: UC-8131-LX, UC-8132-LX, UC-8162-LX, UC-8112-LX, UC-8112-LX1
-    		* defconfig: uc8100_defconfig
+		* defconfig: uc8100_defconfig
 		* dts: am335x-moxa-uc-8100.dts, moxa-uc8100.dts
 		Note: moxa-uc8100.dts is for FWR version 1.x and 2.x
 		      am335x-moxa-uc-8100.dts is for FWR version 3.x or above
 
 	* UC-8100-ME-T-LX series
 		* models: UC-8112-ME-T-LX, UC-8112-ME-T-LX1, UC-8112-ME-T-LX-US-LTE, UC-8112-ME-T-US-LTE-LX1
-    		* defconfig: uc8100me_defconfig
+		* defconfig: uc8100me_defconfig
 		* dts: moxa-uc8100-me.dts
