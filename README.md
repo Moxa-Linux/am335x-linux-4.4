@@ -65,12 +65,10 @@
 		* models: UC-8131-LX, UC-8132-LX, UC-8162-LX, UC-8112-LX, UC-8112-LX1
     		* defconfig: uc8100_defconfig
 		* dts: am335x-moxa-uc-8100.dts, moxa-uc8100.dts
-		Note: moxa-uc8100.dts is for version 1.x and 2.x product
-		      am335x-moxa-uc-8100.dts is for version 3.x or above
+		Note: moxa-uc8100.dts is for FWR version 1.x and 2.x
+		      am335x-moxa-uc-8100.dts is for FWR version 3.x or above
 
 	* UC-8100-ME-T-LX series
 		* models: UC-8112-ME-T-LX, UC-8112-ME-T-LX1, UC-8112-ME-T-LX-US-LTE, UC-8112-ME-T-US-LTE-LX1
     		* defconfig: uc8100me_defconfig
-		* dts: am335x-moxa-uc-8100-me.dts, moxa-uc8100-me.dts
-		Note: moxa-uc8100-me.dts is for version 1.x and 2.x.
-		      am335x-moxa-uc-8100-me.dts is for version 3.x or above.
+		* dts: moxa-uc8100-me.dts
