@@ -17,48 +17,6 @@
 	model = "Moxa UC-2104";
 	compatible = "moxa,uc-2104", "ti,am33xx";
 
-	cpu0_opp_table: opp_table0 {
-		opp50@300000000 {
-			status = "okay";
-		};
-
-		opp100@275000000 {
-			status = "disabled";
-		};
-
-		opp100@300000000 {
-			status = "disabled";
-		};
-
-		opp100@500000000 {
-			status = "disabled";
-		};
-
-		opp100@600000000 {
-			status = "okay";
-		};
-
-		opp120@600000000 {
-			status = "disabled";
-		};
-
-		opp120@720000000 {
-			status = "okay";
-		};
-
-		oppturbo@720000000 {
-			status = "disabled";
-		};
-
-		oppturbo@800000000 {
-			status = "disabled";
-		};
-
-		oppnitro@1000000000 {
-			status = "okay";
-		};
-	};
-
 	memory {
 		device_type = "memory";
 		reg = <0x80000000 0x10000000>; /* 256 MB */
@@ -79,19 +37,28 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1 {
-			label = "uc2100:SIGNAL1";
+			label = "UC2100:YELLOW:SGN1";
 			gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+
 		led2 {
-			label = "uc2100:SIGNAL2";
+			label = "UC2100:YELLOW:SGN2";
 			gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+
 		led3 {
-			label = "uc2100:SIGNAL3";
+			label = "UC2100:YELLOW:SGN3";
 			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		led4 {
+			label = "UC2100:GREEN:USER";
+			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 	};
@@ -110,7 +77,7 @@
 			AM33XX_IOPAD(0x98c, PIN_INPUT_PULLUP | MUX_MODE0)    /* i2c0_scl.i2c0_scl */
 		>;
 	};
-	
+
 	push_button_pins: pinmux_push_button {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x8e4, PIN_INPUT_PULLDOWN | MUX_MODE7)    /* lcd_hsync.gpio2_23 */
@@ -311,9 +278,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -328,9 +295,9 @@
 
 			partitions@2 {
 				label = "U-Boot Env";
-				reg = <0x180000 0x20000>;
+				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 

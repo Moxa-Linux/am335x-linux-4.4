@@ -99,56 +99,56 @@
 	leds {
 		compatible = "gpio-leds";
 		led@1 {
-			label = "uc3100:SYS";
+			label = "UC3100:GREEN:SYS";
 			gpios = <&gpio_xten 7 0>;
 			default-state = "off";
 		};
 
 		led@2 {
-			label = "uc3100:CELL_SIG_1";
-			gpios = <&gpio_xten 8 0>;
+			label = "UC3100:GREEN:CEL";
+			gpios = <&gpio_xten 8 1>;
 			default-state = "off";
 		};
 
 		led@3 {
-			label = "uc3100:CELL_SIG_2";
-			gpios = <&gpio_xten 9 0>;
+			label = "UC3100:GREEN:SGN2-1";
+			gpios = <&gpio_xten 9 1>;
 			default-state = "off";
 		};
 
 		led@4 {
-			label = "uc3100:CELL_SIG_3";
-			gpios = <&gpio_xten 10 0>;
+			label = "UC3100:GREEN:SGN2-2";
+			gpios = <&gpio_xten 10 1>;
 			default-state = "off";
 		};
 
 		led@5 {
-			label = "uc3100:CELL_SIG_4";
-			gpios = <&gpio_xten 11 0>;
+			label = "UC3100:GREEN:SGN2-3";
+			gpios = <&gpio_xten 11 1>;
 			default-state = "off";
 		};
 
 		led@6 {
-			label = "uc3100:WIFI_SIG_1";
-			gpios = <&gpio_xten 12 0>;
+			label = "UC3100:GREEN:WIFI";
+			gpios = <&gpio_xten 12 1>;
 			default-state = "off";
 		};
 
 		led@7 {
-			label = "uc3100:WIFI_SIG_2";
-			gpios = <&gpio_xten 13 0>;
+			label = "UC3100:GREEN:SGN1-1";
+			gpios = <&gpio_xten 13 1>;
 			default-state = "off";
 		};
 
 		led@8 {
-			label = "uc3100:WIFI_SIG_3";
-			gpios = <&gpio_xten 14 0>;
+			label = "UC3100:GREEN:SGN1-2";
+			gpios = <&gpio_xten 14 1>;
 			default-state = "off";
 		};
 
 		led@9 {
-			label = "uc3100:WIFI_SIG_4";
-			gpios = <&gpio_xten 15 0>;
+			label = "UC3100:GREEN:SGN1-3";
+			gpios = <&gpio_xten 15 1>;
 			default-state = "off";
 		};
 	};
@@ -195,7 +195,7 @@
 			AM33XX_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* uart1_txd.uart1_txd */
 		>;
 	};
-	
+
 	uart3_pins: pinmux_uart3_pins {
 		/* MCU FWR Upgrade */
 		pinctrl-single,pins = <
@@ -209,14 +209,14 @@
 			AM33XX_IOPAD(0x920, PIN_INPUT_PULLUP | MUX_MODE1)	/* mii1_txd2.dcan0_rx */
 			AM33XX_IOPAD(0x91c, PIN_OUTPUT_PULLDOWN | MUX_MODE1) 	/* mii1_txd1.dcan0_tx */
 		>;
-	};	
+	};
 
 	dcan1_default: dcan1_default_pins {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x900, PIN_OUTPUT_PULLDOWN | MUX_MODE4)	/* mmc0_clk.dcan1_tx */
 			AM33XX_IOPAD(0x904, PIN_INPUT_PULLUP | MUX_MODE4) 	/* mmc0_cmd.dcan1_rx */
 		>;
-	};	
+	};
 
 	cpsw_default: cpsw_default {
 		pinctrl-single,pins = <
@@ -293,7 +293,7 @@
 			AM33XX_IOPAD(0x888, PIN_INPUT_PULLUP | MUX_MODE3) 	/* gpmc_csn3.mmc2_cmd */
 			AM33XX_IOPAD(0x88c, PIN_INPUT_PULLUP | MUX_MODE3) 	/* gpmc_clk.mmc2_clk */
 		>;
-	};	
+	};
 
 	sdio_sleep: sdio_sleep_pins {
 		pinctrl-single,pins = <
@@ -304,7 +304,7 @@
 			AM33XX_IOPAD(0x888, PIN_INPUT_PULLDOWN | MUX_MODE7) 	/* gpmc_csn3.mmc2_cmd */
 			AM33XX_IOPAD(0x88c, PIN_INPUT_PULLDOWN | MUX_MODE7) 	/* gpmc_clk.mmc2_clk */
 		>;
-	};	
+	};
 
 	/* wl12xx/wl18xx card enable/irq GPIOs. */
 	wlan_pins_default: pinmux_wlan_pins_default {
@@ -317,7 +317,7 @@
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7)	/* spi0_cs1.gpio0_6 */
 		>;
-	};	
+	};
 };
 
 &uart0 {
@@ -364,7 +364,7 @@
 		compatible = "dallas,ds1374";
 		reg = <0x68>;
 	};
-	
+
 	gpio_xten: gpio_xten@27 {
 		compatible = "nxp,pca9535";
 		gpio-controller;
@@ -535,19 +535,13 @@
 
 &phy_sel {
 	reg= <0x44e10650 0xf5>;
-        rmii-clock-ext;
+	rmii-clock-ext;
 };
 
 
 &dcan0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&dcan0_default>;
-	status = "okay";
-};
-
-&dcan1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&dcan1_default>;
 	status = "okay";
 };
 
@@ -600,9 +594,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -617,9 +611,9 @@
 
 			partitions@2 {
 				label = "U-Boot Env";
-				reg = <0x180000 0x20000>;
+				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 
@@ -636,10 +630,10 @@
 
 &mmc3 {
 	/* these are on the crossbar and are outlined in the
-           xbar-event-map element */
-        dmas = <&edma_xbar 12 0 1
+		xbar-event-map element */
+	dmas = <&edma_xbar 12 0 1
 		&edma_xbar 13 0 2>;
-        dma-names = "tx", "rx";
+	dma-names = "tx", "rx";
 
 	status = "okay";
 	vmmc-supply = <&wlan_en_regulator>;

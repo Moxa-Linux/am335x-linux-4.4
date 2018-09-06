@@ -1,0 +1,66 @@
+/*
+ * U-Boot itb image source file for "uc3100 project"
+ */
+
+/dts-v1/;
+
+/ {
+	description = "U-Boot itb image source file for uc3100 project";
+	#address-cells = <1>;
+	
+	images {
+		kernel@uc3100 {
+			description = "Moxa UC3100 Series Unify Linux Kernel";
+			data = /incbin/("../arch/arm/boot/zImage");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			load = <0x80080000>;
+			entry = <0x80080000>;
+		};
+		fdt@uc3101 {
+			description = "Flattened Device Tree blob for UC3101";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-3101.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc3111 {
+			description = "Flattened Device Tree blob for UC3111";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-3111.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc3121 {
+			description = "Flattened Device Tree blob for UC3121";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-3121.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+	};
+	
+	configurations {
+		default = "uc3101";
+		uc3101 {
+			description = "Boot Linux kernel with uc3101 FDT blob";
+			kernel = "kernel@uc3100";
+			fdt = "fdt@uc3101";
+		};
+		uc3111 {
+			description = "Boot Linux kernel with uc3111 FDT blob";
+			kernel = "kernel@uc3100";
+			fdt = "fdt@uc3111";
+		};
+		uc3121 {
+			description = "Boot Linux kernel with uc3121 FDT blob";
+			kernel = "kernel@uc3100";
+			fdt = "fdt@uc3121";
+		};
+	};
+};

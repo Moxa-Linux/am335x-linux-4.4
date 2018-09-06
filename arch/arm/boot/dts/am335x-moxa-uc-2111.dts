@@ -23,48 +23,6 @@
 		};
 	};
 
-	cpu0_opp_table: opp_table0 {
-		opp50@300000000 {
-			status = "okay";
-		};
-
-		opp100@275000000 {
-			status = "disabled";
-		};
-
-		opp100@300000000 {
-			status = "disabled";
-		};
-
-		opp100@500000000 {
-			status = "disabled";
-		};
-
-		opp100@600000000 {
-			status = "okay";
-		};
-
-		opp120@600000000 {
-			status = "disabled";
-		};
-
-		opp120@720000000 {
-			status = "okay";
-		};
-
-		oppturbo@720000000 {
-			status = "disabled";
-		};
-
-		oppturbo@800000000 {
-			status = "disabled";
-		};
-
-		oppnitro@1000000000 {
-			status = "okay";
-		};
-	};
-
 	memory {
 		device_type = "memory";
 		reg = <0x80000000 0x20000000>; /* 512 MB */
@@ -85,8 +43,9 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1 {
-			label = "uc2100:USER";
+			label = "UC2100:GREEN:USER";
 			gpios = <&gpio3 17 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
@@ -439,9 +398,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -456,9 +415,9 @@
 
 			partitions@2 {
 				label = "U-Boot Env";
-				reg = <0x180000 0x20000>;
+				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 

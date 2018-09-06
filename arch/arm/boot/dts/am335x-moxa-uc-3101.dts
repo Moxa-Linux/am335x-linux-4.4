@@ -85,51 +85,56 @@
 	leds {
 		compatible = "gpio-leds";
 		led@1 {
-			label = "uc3100:SYS";
+			label = "UC3100:GREEN:SYS";
 			gpios = <&gpio_xten0 7 0>;
 			default-state = "off";
 		};
 
 		led@2 {
-			label = "uc3100:CELL_SIG_1";
-			gpios = <&gpio_xten0 8 0>;
+			label = "UC3100:GREEN:CEL";
+			gpios = <&gpio_xten0 8 1>;
 			default-state = "off";
 		};
 
 		led@3 {
-			label = "uc3100:CELL_SIG_2";
-			gpios = <&gpio_xten0 9 0>;
+			label = "UC3100:GREEN:SGN2-1";
+			gpios = <&gpio_xten0 9 1>;
 			default-state = "off";
 		};
 
 		led@4 {
-			label = "uc3100:CELL_SIG_3";
-			gpios = <&gpio_xten0 10 0>;
+			label = "UC3100:GREEN:SGN2-2";
+			gpios = <&gpio_xten0 10 1>;
 			default-state = "off";
 		};
+
 		led@5 {
-			label = "uc3100:CELL_SIG_4";
-			gpios = <&gpio_xten0 11 0>;
+			label = "UC3100:GREEN:SGN2-3";
+			gpios = <&gpio_xten0 11 1>;
 			default-state = "off";
 		};
+
 		led@6 {
-			label = "uc3100:WIFI_SIG_1";
-			gpios = <&gpio_xten0 12 0>;
+			label = "UC3100:GREEN:WIFI";
+			gpios = <&gpio_xten0 12 1>;
 			default-state = "off";
 		};
+
 		led@7 {
-			label = "uc3100:WIFI_SIG_2";
-			gpios = <&gpio_xten0 13 0>;
+			label = "UC3100:GREEN:SGN1-1";
+			gpios = <&gpio_xten0 13 1>;
 			default-state = "off";
 		};
+
 		led@8 {
-			label = "uc3100:WIFI_SIG_3";
-			gpios = <&gpio_xten0 14 0>;
+			label = "UC3100:GREEN:SGN1-2";
+			gpios = <&gpio_xten0 14 1>;
 			default-state = "off";
 		};
+
 		led@9 {
-			label = "uc3100:WIFI_SIG_4";
-			gpios = <&gpio_xten0 15 0>;
+			label = "UC3100:GREEN:SGN1-3";
+			gpios = <&gpio_xten0 15 1>;
 			default-state = "off";
 		};
 	};
@@ -176,7 +181,7 @@
 			AM33XX_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* uart1_txd.uart1_txd */
 		>;
 	};
-	
+
 	uart3_pins: pinmux_uart3_pins {
 		/* MCU FWR Upgrade */
 		pinctrl-single,pins = <
@@ -297,7 +302,7 @@
 		compatible = "dallas,ds1374";
 		reg = <0x68>;
 	};
-	
+
 	gpio_xten0: gpio_xten0@27 {
 		compatible = "nxp,pca9535";
 		gpio-controller;
@@ -312,13 +317,6 @@
 
 	status = "okay";
 	clock-frequency = <400000>;
-
-	gpio_xten1: gpio_xten1@27 {
-		compatible = "nxp,pca9535";
-		gpio-controller;
-		#gpio-cells = <2>;
-		reg = <0x27>;
-	};
 };
 
 &usb {
@@ -468,7 +466,7 @@
 
 &phy_sel {
 	reg= <0x44e10650 0xf5>;
-        rmii-clock-ext;
+	rmii-clock-ext;
 };
 
 &sham {
@@ -520,9 +518,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -537,9 +535,9 @@
 
 			partitions@2 {
 				label = "U-Boot Env";
-				reg = <0x180000 0x20000>;
+				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 

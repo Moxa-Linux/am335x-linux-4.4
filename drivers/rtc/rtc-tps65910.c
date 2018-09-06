@@ -285,6 +285,8 @@ static int tps65910_rtc_probe(struct platform_device *pdev)
 		return ret;
 	}
 
+	tps_rtc->rtc->uie_unsupported = 1;
+
 	return 0;
 }
 
