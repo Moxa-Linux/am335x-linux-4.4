@@ -90,6 +90,20 @@
 			cpus = <&cpu0 &cpu1>;
 		};
 
+		rst: reset-controller@e6160000 {
+			compatible = "renesas,r8a7743-rst";
+			reg = <0 0xe6160000 0 0x100>;
+		};
+
+		rwdt: watchdog@e6020000 {
+			compatible = "renesas,r8a7743-wdt",
+				     "renesas,rcar-gen2-wdt";
+			reg = <0 0xe6020000 0 0x0c>;
+			clocks = <&mstp4_clks R8A7743_CLK_RWDT>;
+			power-domains = <&cpg_clocks>;
+			status = "disabled";
+		};
+
 		gic: interrupt-controller@f1001000 {
 			compatible = "arm,gic-400";
 			#interrupt-cells = <3>;
@@ -108,7 +122,7 @@
 
 		gpio0: gpio@e6050000 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6050000 0 0x50>;
 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -122,7 +136,7 @@
 
 		gpio1: gpio@e6051000 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6051000 0 0x50>;
 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -136,7 +150,7 @@
 
 		gpio2: gpio@e6052000 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6052000 0 0x50>;
 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -150,7 +164,7 @@
 
 		gpio3: gpio@e6053000 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6053000 0 0x50>;
 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -164,7 +178,7 @@
 
 		gpio4: gpio@e6054000 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6054000 0 0x50>;
 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -178,7 +192,7 @@
 
 		gpio5: gpio@e6055000 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6055000 0 0x50>;
 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -192,7 +206,7 @@
 
 		gpio6: gpio@e6055400 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6055400 0 0x50>;
 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -206,7 +220,7 @@
 
 		gpio7: gpio@e6055800 {
 			compatible = "renesas,gpio-r8a7743",
-				     "renesas,gpio-rcar";
+				     "renesas,rcar-gen2-gpio";
 			reg = <0 0xe6055800 0 0x50>;
 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
 			#gpio-cells = <2>;
@@ -266,6 +280,29 @@
 				cooling-maps {
 				};
 			};
+		};
+
+		icram0:	sram@e63a0000 {
+			compatible = "mmio-sram";
+			reg = <0 0xe63a0000 0 0x12000>;
+		};
+
+		icram1:	sram@e63c0000 {
+			compatible = "mmio-sram";
+			reg = <0 0xe63c0000 0 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0 0 0xe63c0000 0x1000>;
+
+			smp-sram@0 {
+				compatible = "renesas,smp-sram";
+				reg = <0 0x100>;
+			};
+		};
+
+		icram2:	sram@e6300000 {
+			compatible = "mmio-sram";
+			reg = <0 0xe6300000 0 0x40000>;
 		};
 
 		timer {
@@ -1289,10 +1326,13 @@
 				compatible = "renesas,r8a7743-mstp-clocks",
 					     "renesas,cpg-mstp-clocks";
 				reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
-				clocks = <&cp_clk>;
+				clocks = <&rclk_clk>, <&cp_clk>, <&zs_clk>;
 				#clock-cells = <1>;
-				clock-indices = <R8A7743_CLK_IRQC>;
-				clock-output-names = "irqc";
+				clock-indices = <
+					R8A7743_CLK_RWDT R8A7743_CLK_IRQC
+					R8A7743_CLK_INTC_SYS
+				>;
+				clock-output-names = "rwdt", "irqc", "intc-sys";
 			};
 			mstp5_clks: mstp5_clks@e6150144 {
 				compatible = "renesas,r8a7743-mstp-clocks",
@@ -1592,7 +1632,7 @@
 			renesas,has-lut;
 			renesas,has-sru;
 			renesas,#rpf = <5>;
-			renesas,#uds = <3>;
+			renesas,#uds = <1>;
 			renesas,#wpf = <4>;
 		};
 
@@ -1607,7 +1647,7 @@
 			renesas,has-lut;
 			renesas,#rpf = <4>;
 			renesas,#uds = <1>;
-			renesas,#wpf = <4>;
+			renesas,#wpf = <1>;
 		};
 
 		vsp@fe938000 {
@@ -1621,7 +1661,7 @@
 			renesas,has-lut;
 			renesas,#rpf = <4>;
 			renesas,#uds = <1>;
-			renesas,#wpf = <4>;
+			renesas,#wpf = <1>;
 		};
 
 		pci0: pci@ee090000 {

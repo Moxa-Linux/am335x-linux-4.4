@@ -589,6 +589,14 @@ config LPC18XX_WATCHDOG
 	  To compile this driver as a module, choose M here: the
 	  module will be called lpc18xx_wdt.
 
+config RENESAS_WDT
+	tristate "Renesas WDT Watchdog"
+	depends on ARCH_SHMOBILE || COMPILE_TEST
+	select WATCHDOG_CORE
+	help
+	  This driver adds watchdog support for the integrated watchdogs in the
+	  Renesas R-Car and other SH-Mobile SoCs (usually named RWDT or SWDT).
+
 # AVR32 Architecture
 
 config AT32AP700X_WDT
