@@ -25,7 +25,7 @@
 
 		led_cell_1 {
 			label = "UC2100:GREEN:SGN1";
-			gpios = <&gpio_xten 10 0>;
+			gpios = <&gpio_xten 8 0>;
 			default-state = "off";
 		};
 
@@ -37,7 +37,7 @@
 
 		led_cell_3 {
 			label = "UC2100:GREEN:SGN3";
-			gpios = <&gpio_xten 8 0>;
+			gpios = <&gpio_xten 10 0>;
 			default-state = "off";
 		};
 	};
