@@ -36,12 +36,41 @@
 #include <linux/skbuff.h>
 #include <linux/ti_wilink_st.h>
 #include <linux/module.h>
+#include <linux/of.h>
+#include <linux/of_device.h>
 
 #define MAX_ST_DEVICES	3	/* Imagine 1 on each UART for now */
 static struct platform_device *st_kim_devices[MAX_ST_DEVICES];
 
 /**********************************************************************/
 /* internal functions */
+
+/*
+ *
+ */
+struct ti_st_plat_data	*dt_pdata=NULL;
+static struct ti_st_plat_data *get_platform_data(struct device *dev)
+{
+	struct device_node *np = dev->of_node;
+	const u32 *dt_property;
+	int len;
+
+	dt_pdata = kzalloc(sizeof(*dt_pdata), GFP_KERNEL);
+
+	if (!dt_pdata)
+		pr_err("Can't allocate device_tree platform data\n");
+
+	dt_property = of_get_property(np, "dev_name", &len);
+	if (dt_property)
+		memcpy(&dt_pdata->dev_name, dt_property, len);
+	of_property_read_u32(np, "nshutdown_gpio",
+			     (u32 *)&dt_pdata->nshutdown_gpio);
+	of_property_read_u32(np, "flow_cntrl", (u32 *)&dt_pdata->flow_cntrl);
+	of_property_read_u32(np, "baud_rate", (u32 *)&dt_pdata->baud_rate);
+
+	return dt_pdata;
+}
+
 
 /**
  * st_get_plat_device -
@@ -205,7 +234,6 @@ static void kim_int_recv(struct kim_data_s *kim_gdata,
 		skb_reserve(kim_gdata->rx_skb, 8);
 		kim_gdata->rx_skb->cb[0] = 4;
 		kim_gdata->rx_skb->cb[1] = 0;
-
 	}
 	return;
 }
@@ -463,8 +491,11 @@ long st_kim_start(void *kim_data)
 	struct ti_st_plat_data	*pdata;
 	struct kim_data_s	*kim_gdata = (struct kim_data_s *)kim_data;
 
-	pr_info(" %s", __func__);
-	pdata = kim_gdata->kim_pdev->dev.platform_data;
+	pr_info(" %s\n", __func__);
+	if ( kim_gdata->kim_pdev->dev.of_node )
+		pdata = dt_pdata;
+	else
+		pdata = kim_gdata->kim_pdev->dev.platform_data;
 
 	do {
 		/* platform specific enabling code here */
@@ -524,11 +555,15 @@ long st_kim_stop(void *kim_data)
 {
 	long err = 0;
 	struct kim_data_s	*kim_gdata = (struct kim_data_s *)kim_data;
-	struct ti_st_plat_data	*pdata =
-		kim_gdata->kim_pdev->dev.platform_data;
+	struct ti_st_plat_data	*pdata;
 	struct tty_struct	*tty = kim_gdata->core_data->tty;
 
 	reinit_completion(&kim_gdata->ldisc_installed);
+
+	if ( kim_gdata->kim_pdev->dev.of_node )
+		pdata = dt_pdata;
+	else
+		pdata = kim_gdata->kim_pdev->dev.platform_data;
 
 	if (tty) {	/* can be called before ldisc is installed */
 		/* Flush any pending characters in the driver and discipline. */
@@ -725,8 +760,17 @@ static struct dentry *kim_debugfs_dir;
 static int kim_probe(struct platform_device *pdev)
 {
 	struct kim_data_s	*kim_gdata;
-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
+	struct ti_st_plat_data	*pdata;
 	int err;
+
+	if ( pdev->dev.of_node )
+		pdata = get_platform_data(&pdev->dev);
+	else
+		pdata = pdev->dev.platform_data;
+	if ( pdata == NULL ) {
+		dev_err(&pdev->dev, "Platform data is missing !\n");
+		return -ENXIO;
+	}
 
 	if ((pdev->id != -1) && (pdev->id < MAX_ST_DEVICES)) {
 		/* multiple devices could exist */
@@ -734,6 +778,26 @@ static int kim_probe(struct platform_device *pdev)
 	} else {
 		/* platform's sure about existence of 1 device */
 		st_kim_devices[0] = pdev;
+	}
+
+	/* added by Victor Yu. 2018-08-15 */
+	/* In Moxa UC3100 series product this gpio is asccessed by i2c */
+	/* but the i2c device driver is loader later this driver */
+	/* so it will be request fail ! It will let this driver */
+	/* initialize again. So do it at the begin */
+
+	/* Claim the chip enable nShutdown gpio from the system */
+	err = gpio_request(pdata->nshutdown_gpio, "kim");
+	if (unlikely(err)) {
+		pr_err(" gpio %d request failed ", pdata->nshutdown_gpio);
+		return err;
+	}
+
+	/* Configure nShutdown GPIO as output=0 */
+	err = gpio_direction_output(pdata->nshutdown_gpio, 0);
+	if (unlikely(err)) {
+		pr_err(" unable to configure gpio %d", pdata->nshutdown_gpio);
+		return err;
 	}
 
 	kim_gdata = kzalloc(sizeof(struct kim_data_s), GFP_ATOMIC);
@@ -749,23 +813,13 @@ static int kim_probe(struct platform_device *pdev)
 		err = -EIO;
 		goto err_core_init;
 	}
+
 	/* refer to itself */
 	kim_gdata->core_data->kim_data = kim_gdata;
 
 	/* Claim the chip enable nShutdown gpio from the system */
 	kim_gdata->nshutdown = pdata->nshutdown_gpio;
-	err = gpio_request(kim_gdata->nshutdown, "kim");
-	if (unlikely(err)) {
-		pr_err(" gpio %d request failed ", kim_gdata->nshutdown);
-		goto err_sysfs_group;
-	}
 
-	/* Configure nShutdown GPIO as output=0 */
-	err = gpio_direction_output(kim_gdata->nshutdown, 0);
-	if (unlikely(err)) {
-		pr_err(" unable to configure gpio %d", kim_gdata->nshutdown);
-		goto err_sysfs_group;
-	}
 	/* get reference of pdev for request_firmware
 	 */
 	kim_gdata->kim_pdev = pdev;
@@ -808,8 +862,13 @@ err_core_init:
 static int kim_remove(struct platform_device *pdev)
 {
 	/* free the GPIOs requested */
-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
+	struct ti_st_plat_data	*pdata;
 	struct kim_data_s	*kim_gdata;
+
+	if ( pdev->dev.of_node )
+		pdata = dt_pdata;
+	else
+		pdata = pdev->dev.platform_data;
 
 	kim_gdata = platform_get_drvdata(pdev);
 
@@ -828,6 +887,10 @@ static int kim_remove(struct platform_device *pdev)
 
 	kfree(kim_gdata);
 	kim_gdata = NULL;
+	if ( dt_pdata ) {
+		kfree(dt_pdata);
+		dt_pdata = NULL;
+	}
 	return 0;
 }
 
@@ -838,7 +901,7 @@ static int kim_suspend(struct platform_device *pdev, pm_message_t state)
 	if (pdata->suspend)
 		return pdata->suspend(pdev, state);
 
-	return 0;
+	return -EOPNOTSUPP;
 }
 
 static int kim_resume(struct platform_device *pdev)
@@ -848,10 +911,15 @@ static int kim_resume(struct platform_device *pdev)
 	if (pdata->resume)
 		return pdata->resume(pdev);
 
-	return 0;
+	return -EOPNOTSUPP;
 }
 
 /**********************************************************************/
+static const struct of_device_id kim_of_match[] = {
+        { .compatible = "kim"},
+        { },
+};
+
 /* entry point for ST KIM module, called in from ST Core */
 static struct platform_driver kim_platform_driver = {
 	.probe = kim_probe,
@@ -860,6 +928,7 @@ static struct platform_driver kim_platform_driver = {
 	.resume = kim_resume,
 	.driver = {
 		.name = "kim",
+		.of_match_table = kim_of_match,
 	},
 };
 

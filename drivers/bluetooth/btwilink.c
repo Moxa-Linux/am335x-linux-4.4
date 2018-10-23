@@ -30,6 +30,7 @@
 
 #include <linux/ti_wilink_st.h>
 #include <linux/module.h>
+#include <linux/of.h>
 
 /* Bluetooth Driver Version */
 #define VERSION               "1.0"
@@ -331,11 +332,17 @@ static int bt_ti_remove(struct platform_device *pdev)
 	return 0;
 }
 
+static const struct of_device_id btwilink_of_match[] = {
+        { .compatible = "btwilink" },
+        {},
+};
+
 static struct platform_driver btwilink_driver = {
 	.probe = bt_ti_probe,
 	.remove = bt_ti_remove,
 	.driver = {
 		.name = "btwilink",
+		.of_match_table = btwilink_of_match,
 	},
 };
 
