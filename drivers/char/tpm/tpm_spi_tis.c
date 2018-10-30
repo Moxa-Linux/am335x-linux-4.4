@@ -151,6 +151,7 @@ MODULE_DEVICE_TABLE(spi, tpm_tis_spi_id);
 static const struct of_device_id of_tis_spi_match[] = {
 	{ .compatible = "infineon,slb9670", },
 	{ .compatible = "tcg,tpm_spi_tis", },
+	{ .compatible = "tcg,tpm_tis-spi", },
 	{}
 };
 MODULE_DEVICE_TABLE(of, of_tis_spi_match);
