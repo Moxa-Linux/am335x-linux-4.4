@@ -84,9 +84,6 @@ To create uImage file. (For uImage kernel type product.)
 # make uImage
 ```
 
-Note:	For standard Linux kernel source code, building a Linux kernel in the git source code on a branch automatically appends "+".
-	If you switch kernel source code to a tag or build from a source that is not in git, "+" will not be appended.
-
 ---
 ## How to update kernel
 ### Steps to update kernel
@@ -165,9 +162,9 @@ There following are the list of product kernel configuration files. defconfig is
 
 #### Kernel Type: itb file
 ##### UC-2100 series
-* models: UC-2101-LX, UC-2102-LX, UC-2104-LX, UC-2111-LX, UC-2112-LX, UC-2112-T-LX
+* models: UC-2101-LX, UC-2102-LX, UC-2104-LX, UC-2111-LX, UC-2112-LX, UC-2112-T-LX, UC-2114-T-LX, UC-2116-T-LX
 * defconfig: uc2100_defconfig
-* dts: am335x-moxa-uc-2101.dts, am335x-moxa-uc-2102.dts, am335x-moxa-uc-2104.dts, am335x-moxa-uc-2111.dts, am335x-moxa-uc-2112.dts
+* dts: am335x-moxa-uc-2101.dts, am335x-moxa-uc-2102.dts, am335x-moxa-uc-2104.dts, am335x-moxa-uc-2111.dts, am335x-moxa-uc-2112.dts, am335x-moxa-uc-2114.dts, am335x-moxa-uc-2116.dts
 * its: am335x-moxa-uc-2100.its
 
 ##### UC-3100 series
