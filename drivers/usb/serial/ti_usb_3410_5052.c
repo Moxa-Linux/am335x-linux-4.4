@@ -951,7 +951,7 @@ static void ti_close(struct usb_serial_port *port)
 
 #if 1	/* FIXME: Victor Yu. 2017/6/2,
 	 * I think it should be done the last close */
-//#define LATE_KILL_URB	1
+#define LATE_KILL_URB	1
 	#ifndef LATE_KILL_URB	/* FIXME: Victor Yu. 2017/6/26 */
 		usb_kill_urb(port->serial->port[0]->interrupt_in_urb);
 		usb_kill_urb(port->read_urb);

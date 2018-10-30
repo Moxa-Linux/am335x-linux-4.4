@@ -153,6 +153,18 @@
 		};
 	};
 
+	kim {
+		compatible = "kim";
+		dev_name = "/dev/ttyS5";
+		nshutdown_gpio = <485>;
+		flow_cntrl = <1>;
+		baud_rate = <115200>;
+	};
+
+	btwilink {
+		compatible = "btwilink";
+	};
+
 	buttons: push_button {
 		compatible = "gpio-keys";
 	};
@@ -215,6 +227,23 @@
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x900, PIN_OUTPUT_PULLDOWN | MUX_MODE4)	/* mmc0_clk.dcan1_tx */
 			AM33XX_IOPAD(0x904, PIN_INPUT_PULLUP | MUX_MODE4) 	/* mmc0_cmd.dcan1_rx */
+		>;
+	};
+
+	uart5_pins: pinmux_uart5_pins {
+		/* WL183x bluetooth */
+		pinctrl-single,pins = <
+			/* lcd_data9.uart5_rxd */
+			AM33XX_IOPAD(0x8c4, PIN_INPUT_PULLUP | MUX_MODE4)
+
+			/* lcd_data8.uart5_txd */
+			AM33XX_IOPAD(0x8c0, PIN_OUTPUT_PULLDOWN | MUX_MODE4)
+
+			/* lcd_data14.uart5_ctsn */
+			AM33XX_IOPAD(0x8d8, PIN_INPUT_PULLUP | MUX_MODE6)
+
+			/* lcd_data15.uart5_rtsn */
+			AM33XX_IOPAD(0x8dc, PIN_OUTPUT_PULLDOWN | MUX_MODE6)
 		>;
 	};
 
@@ -340,6 +369,13 @@
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart3_pins>;
+};
+
+&uart5 {
+	/* UART 5 setting */
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart5_pins>;
 };
 
 &i2c0 {
