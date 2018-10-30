@@ -84,9 +84,6 @@ To create uImage file. (For uImage kernel type product.)
 # make uImage
 ```
 
-Note:	For standard Linux kernel source code, building a Linux kernel in the git source code on a branch automatically appends "+".
-	If you switch kernel source code to a tag or build from a source that is not in git, "+" will not be appended.
-
 ---
 ## How to update kernel
 ### Steps to update kernel
