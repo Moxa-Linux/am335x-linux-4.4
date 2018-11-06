@@ -99,9 +99,9 @@
 
 	minipcie_pins: pinmux_minipcie {
 		pinctrl-single,pins = <
-			AM33XX_IOPAD(0x8e8 ,PIN_INPUT_PULLDOWN | MUX_MODE7) /* lcd_pclk.gpio2_24 */
+			AM33XX_IOPAD(0x8e8 ,PIN_INPUT_PULLUP | MUX_MODE7) /* lcd_pclk.gpio2_24 */
 			AM33XX_IOPAD(0x8ec ,PIN_INPUT_PULLDOWN | MUX_MODE7) /* lcd_ac_bias_en.gpio2_25 */
-			AM33XX_IOPAD(0x8e0 ,PIN_INPUT_PULLDOWN | MUX_MODE7) /* lcd_vsync.gpio2_22  Power off PIN*/
+			AM33XX_IOPAD(0x8e0 ,PIN_INPUT_PULLUP | MUX_MODE7) /* lcd_vsync.gpio2_22  Power off PIN*/
 		>;
 	};
 
