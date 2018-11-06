@@ -250,11 +250,6 @@
 	status = "okay";
 	clock-frequency = <400000>;
 
-	tpm: tpm@20 {
-		compatible = "infineon,slb9645tt";
-		reg = <0x20>;
-	};
-
 	tps: tps@2d {
 		compatible = "ti,tps65910";
 		reg = <0x2d>;
