@@ -7,7 +7,7 @@
 / {
 	description = "U-Boot itb image source file for uc8100a-me project";
 	#address-cells = <1>;
-	
+
 	images {
 		kernel@uc8100a-me {
 			description = "Moxa UC8100A-ME Series Unify Linux Kernel";
@@ -28,7 +28,7 @@
 			load = <0x80000000>;
 		};
 	};
-	
+
 	configurations {
 		default = "uc8100a-me";
 		uc8100a-me {
