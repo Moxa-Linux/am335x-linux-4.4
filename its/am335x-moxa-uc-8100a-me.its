@@ -1,0 +1,40 @@
+/*
+ * U-Boot itb image source file for "uc8100a-me project"
+ */
+
+/dts-v1/;
+
+/ {
+	description = "U-Boot itb image source file for uc8100a-me project";
+	#address-cells = <1>;
+
+	images {
+		kernel@uc8100a-me {
+			description = "Moxa UC8100A-ME Series Unify Linux Kernel";
+			data = /incbin/("../arch/arm/boot/zImage");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			load = <0x80080000>;
+			entry = <0x80080000>;
+		};
+		fdt@uc8100a-me {
+			description = "Flattened Device Tree blob for UC8100A-ME";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-8100a-me.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+	};
+
+	configurations {
+		default = "uc8100a-me";
+		uc8100a-me {
+			description = "Boot Linux kernel with uc8100a-me FDT blob";
+			kernel = "kernel@uc8100a-me";
+			fdt = "fdt@uc8100a-me";
+		};
+	};
+};
