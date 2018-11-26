@@ -466,7 +466,26 @@ dtb-$(CONFIG_SOC_AM33XX) += \
 	am335x-pepper.dtb \
 	am335x-lxm.dtb \
 	am335x-chiliboard.dtb \
-	am335x-wega-rdk.dtb
+	am335x-wega-rdk.dtb \
+	moxa-uc8100.dtb \
+	moxa-uc8100-me.dtb \
+	am335x-moxa-uc-2101.dtb \
+	am335x-moxa-uc-2102.dtb \
+	am335x-moxa-uc-2104.dtb \
+	am335x-moxa-uc-2111.dtb \
+	am335x-moxa-uc-2112.dtb \
+	am335x-moxa-uc-2114.dtb \
+	am335x-moxa-uc-2116.dtb \
+	am335x-moxa-uc-3101.dtb \
+	am335x-moxa-uc-3111.dtb \
+	am335x-moxa-uc-3121.dtb \
+	am335x-moxa-uc-5101.dtb \
+	am335x-moxa-uc-5102.dtb \
+	am335x-moxa-uc-5111.dtb \
+	am335x-moxa-uc-5112.dtb \
+	am335x-moxa-uc-8100.dtb \
+	am335x-moxa-uc-8100-me.dtb \
+	am335x-moxa-uc-8100a-me.dtb
 dtb-$(CONFIG_ARCH_OMAP4) += \
 	omap4-duovero-parlor.dtb \
 	omap4-panda.dtb \

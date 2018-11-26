@@ -1,0 +1,79 @@
+/*
+ * U-Boot itb image source file for "uc5100 project"
+ */
+
+/dts-v1/;
+
+/ {
+	description = "U-Boot itb image source file for uc5100 project";
+	#address-cells = <1>;
+	
+	images {
+		kernel@uc5100 {
+			description = "Moxa UC5100 Series Unify Linux Kernel";
+			data = /incbin/("../arch/arm/boot/zImage");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			load = <0x80080000>;
+			entry = <0x80080000>;
+		};
+		fdt@uc5101 {
+			description = "Flattened Device Tree blob for UC5101";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-5101.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc5102 {
+			description = "Flattened Device Tree blob for UC5102";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-5102.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc5111 {
+			description = "Flattened Device Tree blob for UC5111";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-5111.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+		fdt@uc5112 {
+			description = "Flattened Device Tree blob for UC5112";
+			data = /incbin/("../arch/arm/boot/dts/am335x-moxa-uc-5112.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x80000000>;
+		};
+	};
+	
+	configurations {
+		default = "uc5101";
+		uc5101 {
+			description = "Boot Linux kernel with uc5101 FDT blob";
+			kernel = "kernel@uc5100";
+			fdt = "fdt@uc5101";
+		};
+		uc5102 {
+			description = "Boot Linux kernel with uc5102 FDT blob";
+			kernel = "kernel@uc5100";
+			fdt = "fdt@uc5102";
+		};
+		uc5111 {
+			description = "Boot Linux kernel with uc5111 FDT blob";
+			kernel = "kernel@uc5100";
+			fdt = "fdt@uc5111";
+		};
+		uc5112 {
+			description = "Boot Linux kernel with uc5112 FDT blob";
+			kernel = "kernel@uc5100";
+			fdt = "fdt@uc5112";
+		};
+	};
+};

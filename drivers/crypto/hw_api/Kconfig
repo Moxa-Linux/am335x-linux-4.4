@@ -1,0 +1,5 @@
+config CRYPTO_DEV_LINUX
+	tristate "Userspace API for accessing HW accelerators"
+	default "m"
+	help
+	  Cryptodev-linux is a Linux-kernel device that allows user-space access to hardware c		ryptographic accelerators. 
