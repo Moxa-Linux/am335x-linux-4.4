@@ -137,7 +137,7 @@ static void musb_h_tx_flush_fifo(struct musb_hw_ep *ep)
 		if (retries-- < 1) {
 			dev_printk(KERN_INFO, musb->controller, "Could not flush host TX%d fifo: csr: %04x\n", ep->epnum, csr);
 			return;
-		}
+		mdelay(1);
 	}
 }
 
