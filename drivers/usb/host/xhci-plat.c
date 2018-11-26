@@ -53,7 +53,8 @@ static int xhci_plat_setup(struct usb_hcd *hcd)
 	int ret;
 
 	if (of_device_is_compatible(of_node, "renesas,xhci-r8a7790") ||
-	    of_device_is_compatible(of_node, "renesas,xhci-r8a7791")) {
+	    of_device_is_compatible(of_node, "renesas,xhci-r8a7791") ||
+	    of_device_is_compatible(of_node, "renesas,xhci-r8a7743")) {
 		ret = xhci_rcar_init_quirk(hcd);
 		if (ret)
 			return ret;
@@ -67,7 +68,8 @@ static int xhci_plat_start(struct usb_hcd *hcd)
 	struct device_node *of_node = hcd->self.controller->of_node;
 
 	if (of_device_is_compatible(of_node, "renesas,xhci-r8a7790") ||
-	    of_device_is_compatible(of_node, "renesas,xhci-r8a7791"))
+	    of_device_is_compatible(of_node, "renesas,xhci-r8a7791") ||
+	    of_device_is_compatible(of_node, "renesas,xhci-r8a7743"))
 		xhci_rcar_start(hcd);
 
 	return xhci_run(hcd);
@@ -267,6 +269,7 @@ static const struct of_device_id usb_xhci_of_match[] = {
 	{ .compatible = "xhci-platform" },
 	{ .compatible = "marvell,armada-375-xhci"},
 	{ .compatible = "marvell,armada-380-xhci"},
+	{ .compatible = "renesas,xhci-r8a7743"},
 	{ .compatible = "renesas,xhci-r8a7790"},
 	{ .compatible = "renesas,xhci-r8a7791"},
 	{ },
@@ -284,6 +287,7 @@ MODULE_DEVICE_TABLE(acpi, usb_xhci_acpi_match);
 static struct platform_driver usb_xhci_driver = {
 	.probe	= xhci_plat_probe,
 	.remove	= xhci_plat_remove,
+	.shutdown	= usb_hcd_platform_shutdown,
 	.driver	= {
 		.name = "xhci-hcd",
 		.pm = DEV_PM_OPS,
