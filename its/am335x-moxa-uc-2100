@@ -1,0 +1,4 @@
+#!/bin/bash
+
+make dtbs
+mkimage -f its/am335x-moxa-uc-2100.its its/am335x-moxa-uc-2100.itb
