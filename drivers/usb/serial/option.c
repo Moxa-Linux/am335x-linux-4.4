@@ -293,13 +293,23 @@ static void option_instat_callback(struct urb *urb);
 #define TELIT_PRODUCT_ME910_DUAL_MODEM		0x1101
 #define TELIT_PRODUCT_LE920			0x1200
 #define TELIT_PRODUCT_LE910			0x1201
+#define TELIT_PRODUCT_LE910_USBCFG1		0x1203
+#define TELIT_PRODUCT_LE910_USBCFG2		0x1204
 #define TELIT_PRODUCT_LE910_USBCFG4		0x1206
+#define TELIT_PRODUCT_LE910C4_USBCFG5		0x1250
+#define TELIT_PRODUCT_LE910C4_USBCFG6		0x1251
+#define TELIT_PRODUCT_LE910C4_USBCFG7		0x1252
+#define TELIT_PRODUCT_LE910C4_USBCFG8		0x1253
+#define TELIT_PRODUCT_LE910C4_USBCFG9		0x1254
+#define TELIT_PRODUCT_LE910C4_USBCFG10		0x1255
 #define TELIT_PRODUCT_LE920A4_1207		0x1207
 #define TELIT_PRODUCT_LE920A4_1208		0x1208
 #define TELIT_PRODUCT_LE920A4_1211		0x1211
 #define TELIT_PRODUCT_LE920A4_1212		0x1212
 #define TELIT_PRODUCT_LE920A4_1213		0x1213
 #define TELIT_PRODUCT_LE920A4_1214		0x1214
+#define TELIT_PRODUCT_LN940_RMNET		0x1900
+#define TELIT_PRODUCT_LN940_MBIM_EXT		0x1901
 
 /* ZTE PRODUCTS */
 #define ZTE_VENDOR_ID				0x19d2
@@ -564,6 +574,32 @@ static void option_instat_callback(struct urb *urb);
 /* Interface is reserved */
 #define RSVD(ifnum)	((BIT(ifnum) & 0xff) << 0)
 
+static const struct option_blacklist_info telit_le910c4_blacklist_usbcfg5 = {
+	.sendsetup = BIT(1),
+	.reserved = BIT(0),
+};
+
+static const struct option_blacklist_info telit_le910c4_blacklist_usbcfg6 = {
+	.sendsetup = BIT(2),
+	.reserved = BIT(0) | BIT(1),
+};
+
+static const struct option_blacklist_info telit_ln940_blacklist_mbim_ext = {
+	.sendsetup = BIT(0),
+	.reserved = BIT(4) | BIT(5),
+};
+
+static const struct option_blacklist_info cinterion_rmnet2_blacklist = {
+	.reserved = BIT(4) | BIT(5),
+};
+
+static const struct option_blacklist_info YUGA_9X07_blacklist = {
+	.reserved = BIT(0) | BIT(1) | BIT(4),
+};
+
+static const struct option_blacklist_info ublox_r410m_blacklist = {
+	.reserved = BIT(1) | BIT(3),
+};
 
 static const struct usb_device_id option_ids[] = {
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
@@ -1067,6 +1103,11 @@ static const struct usb_device_id option_ids[] = {
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x6613)}, /* Onda H600/ZTE MF330 */
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x0023)}, /* ONYX 3G device */
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9000)}, /* SIMCom SIM5218 */
+	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9025)}, /* YUGA CLM920-CN3 */
+	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9625),
+	  .driver_info=(kernel_ulong_t)&YUGA_9X07_blacklist},
+	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x90b2), /* ublox R410M */
+	  .driver_info = (kernel_ulong_t)&ublox_r410m_blacklist },
 	/* Quectel products using Qualcomm vendor ID */
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC15)},
 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC20),
@@ -1148,9 +1189,29 @@ static const struct usb_device_id option_ids[] = {
 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_ME910_DUAL_MODEM),
 	  .driver_info = NCTRL(0) | RSVD(3) },
 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910),
+<<<<<<< drivers/usb/serial/option.c
 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG4),
 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
+=======
+		.driver_info = (kernel_ulong_t)&telit_le910_blacklist },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG1),
+		.driver_info = (kernel_ulong_t)&telit_le922_blacklist_usbcfg0 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG2),
+		.driver_info = (kernel_ulong_t)&telit_le922_blacklist_usbcfg3 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG4),
+		.driver_info = (kernel_ulong_t)&telit_le922_blacklist_usbcfg3 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910C4_USBCFG5),
+		.driver_info = (kernel_ulong_t)&telit_le910c4_blacklist_usbcfg5 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910C4_USBCFG6),
+		.driver_info = (kernel_ulong_t)&telit_le910c4_blacklist_usbcfg6 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910C4_USBCFG7),
+		.driver_info = (kernel_ulong_t)&telit_le910c4_blacklist_usbcfg6 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910C4_USBCFG8),
+		.driver_info = (kernel_ulong_t)&telit_le910c4_blacklist_usbcfg6 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910C4_USBCFG9) },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910C4_USBCFG10) },
+>>>>>>> drivers/usb/serial/option.c
 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920),
 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(5) },
 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1207) },
@@ -1162,7 +1223,15 @@ static const struct usb_device_id option_ids[] = {
 	  .driver_info = NCTRL(0) | RSVD(1) },
 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1213, 0xff) },
 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1214),
+<<<<<<< drivers/usb/serial/option.c
 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
+=======
+		.driver_info = (kernel_ulong_t)&telit_le922_blacklist_usbcfg3 },
+	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LN940_RMNET, USB_CLASS_VENDOR_SPEC),
+		.driver_info = (kernel_ulong_t)&telit_le920a4_blacklist_1 },
+	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LN940_MBIM_EXT),
+		.driver_info = (kernel_ulong_t)&telit_ln940_blacklist_mbim_ext },
+>>>>>>> drivers/usb/serial/option.c
 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, ZTE_PRODUCT_MF622, 0xff, 0xff, 0xff) }, /* ZTE WCDMA products */
 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0002, 0xff, 0xff, 0xff),
 	  .driver_info = RSVD(1) },

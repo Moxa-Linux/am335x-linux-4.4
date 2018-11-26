@@ -596,6 +596,16 @@ config USB_SERIAL_TI
 	  To compile this driver as a module, choose M here: the
 	  module will be called ti_usb_3410_5052.
 
+config USB_SERIAL_MOXA_UPORT_11X0
+	tristate "USB MOXA UPORT 11x0 (TI 3410/5052 Chip) Serial Driver"
+	depends on USB_SERIAL
+	help
+	  Say Y here if you want to use the MOXA UPORT 11x0 (TI USB 3410 or 5052)
+	  serial devices.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called mxu11x0.
+
 config USB_SERIAL_CYBERJACK
 	tristate "USB REINER SCT cyberJack pinpad/e-com chipcard reader"
 	---help---
