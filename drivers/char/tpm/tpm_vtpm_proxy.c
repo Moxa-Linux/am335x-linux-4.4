@@ -25,6 +25,7 @@
 #include <linux/anon_inodes.h>
 #include <linux/poll.h>
 #include <linux/compat.h>
+#include <uapi/linux/eventpoll.h>
 
 #include "tpm.h"
 
@@ -173,10 +174,10 @@ static ssize_t vtpm_proxy_fops_write(struct file *filp, const char __user *buf,
  *
  * Return: Poll flags
  */
-static __poll_t vtpm_proxy_fops_poll(struct file *filp, poll_table *wait)
+static unsigned vtpm_proxy_fops_poll(struct file *filp, poll_table *wait)
 {
 	struct proxy_dev *proxy_dev = filp->private_data;
-	__poll_t ret;
+	unsigned ret;
 
 	poll_wait(filp, &proxy_dev->wq, wait);
 
