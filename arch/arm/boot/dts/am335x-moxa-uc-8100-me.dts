@@ -593,7 +593,7 @@
 	};
 
 	tpm_spi_tis@1{
-		compatible = "tcg,tpm_spi_tis";
+		compatible = "tcg,tpm_tis-spi";
 		reg = <1>;	/* CE1 */
 		spi-max-frequency = <500000>;
 	};
