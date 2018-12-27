@@ -7,10 +7,11 @@
  *	Stefan Berger <stefanb@us.ibm.com>
  *	Reiner Sailer <sailer@watson.ibm.com>
  *	Kylene Hall <kjhall@us.ibm.com>
+ *	Nayna Jain <nayna@linux.vnet.ibm.com>
  *
  * Maintained by: <tpmdd-devel@lists.sourceforge.net>
  *
- * Access to the eventlog created by a system's firmware / BIOS
+ * Access to the event log created by a system's firmware / BIOS
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,13 +21,15 @@
  */
 
 #include <linux/seq_file.h>
+#include <linux/efi.h>
 #include <linux/fs.h>
 #include <linux/security.h>
 #include <linux/module.h>
 #include <linux/slab.h>
+#include <linux/tpm_eventlog.h>
 
-#include "tpm.h"
-#include "tpm_eventlog.h"
+#include "../tpm.h"
+#include "common.h"
 
 
 static const char* tcpa_event_type_strings[] = {
@@ -69,10 +72,11 @@ static const char* tcpa_pc_event_id_strings[] = {
 };
 
 /* returns pointer to start of pos. entry of tcg log */
-static void *tpm_bios_measurements_start(struct seq_file *m, loff_t *pos)
+static void *tpm1_bios_measurements_start(struct seq_file *m, loff_t *pos)
 {
 	loff_t i;
-	struct tpm_bios_log *log = m->private;
+	struct tpm_chip *chip = m->private;
+	struct tpm_bios_log *log = &chip->log;
 	void *addr = log->bios_event_log;
 	void *limit = log->bios_event_log_end;
 	struct tcpa_event *event;
@@ -115,11 +119,12 @@ static void *tpm_bios_measurements_start(struct seq_file *m, loff_t *pos)
 	return addr;
 }
 
-static void *tpm_bios_measurements_next(struct seq_file *m, void *v,
+static void *tpm1_bios_measurements_next(struct seq_file *m, void *v,
 					loff_t *pos)
 {
 	struct tcpa_event *event = v;
-	struct tpm_bios_log *log = m->private;
+	struct tpm_chip *chip = m->private;
+	struct tpm_bios_log *log = &chip->log;
 	void *limit = log->bios_event_log_end;
 	u32 converted_event_size;
 	u32 converted_event_type;
@@ -145,7 +150,7 @@ static void *tpm_bios_measurements_next(struct seq_file *m, void *v,
 	return v;
 }
 
-static void tpm_bios_measurements_stop(struct seq_file *m, void *v)
+static void tpm1_bios_measurements_stop(struct seq_file *m, void *v)
 {
 }
 
@@ -228,7 +233,7 @@ static int get_event_name(char *dest, struct tcpa_event *event,
 
 }
 
-static int tpm_binary_bios_measurements_show(struct seq_file *m, void *v)
+static int tpm1_binary_bios_measurements_show(struct seq_file *m, void *v)
 {
 	struct tcpa_event *event = v;
 	struct tcpa_event temp_event;
@@ -257,21 +262,7 @@ static int tpm_binary_bios_measurements_show(struct seq_file *m, void *v)
 
 }
 
-static int tpm_bios_measurements_release(struct inode *inode,
-					 struct file *file)
-{
-	struct seq_file *seq = file->private_data;
-	struct tpm_bios_log *log = seq->private;
-
-	if (log) {
-		kfree(log->bios_event_log);
-		kfree(log);
-	}
-
-	return seq_release(inode, file);
-}
-
-static int tpm_ascii_bios_measurements_show(struct seq_file *m, void *v)
+static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
 {
 	int len = 0;
 	char *eventname;
@@ -304,151 +295,16 @@ static int tpm_ascii_bios_measurements_show(struct seq_file *m, void *v)
 	return 0;
 }
 
-static const struct seq_operations tpm_ascii_b_measurments_seqops = {
-	.start = tpm_bios_measurements_start,
-	.next = tpm_bios_measurements_next,
-	.stop = tpm_bios_measurements_stop,
-	.show = tpm_ascii_bios_measurements_show,
+const struct seq_operations tpm1_ascii_b_measurements_seqops = {
+	.start = tpm1_bios_measurements_start,
+	.next = tpm1_bios_measurements_next,
+	.stop = tpm1_bios_measurements_stop,
+	.show = tpm1_ascii_bios_measurements_show,
 };
 
-static const struct seq_operations tpm_binary_b_measurments_seqops = {
-	.start = tpm_bios_measurements_start,
-	.next = tpm_bios_measurements_next,
-	.stop = tpm_bios_measurements_stop,
-	.show = tpm_binary_bios_measurements_show,
+const struct seq_operations tpm1_binary_b_measurements_seqops = {
+	.start = tpm1_bios_measurements_start,
+	.next = tpm1_bios_measurements_next,
+	.stop = tpm1_bios_measurements_stop,
+	.show = tpm1_binary_bios_measurements_show,
 };
-
-static int tpm_ascii_bios_measurements_open(struct inode *inode,
-					    struct file *file)
-{
-	int err;
-	struct tpm_bios_log *log;
-	struct seq_file *seq;
-
-	log = kzalloc(sizeof(struct tpm_bios_log), GFP_KERNEL);
-	if (!log)
-		return -ENOMEM;
-
-	if ((err = read_log(log)))
-		goto out_free;
-
-	/* now register seq file */
-	err = seq_open(file, &tpm_ascii_b_measurments_seqops);
-	if (!err) {
-		seq = file->private_data;
-		seq->private = log;
-	} else {
-		goto out_free;
-	}
-
-out:
-	return err;
-out_free:
-	kfree(log->bios_event_log);
-	kfree(log);
-	goto out;
-}
-
-static const struct file_operations tpm_ascii_bios_measurements_ops = {
-	.open = tpm_ascii_bios_measurements_open,
-	.read = seq_read,
-	.llseek = seq_lseek,
-	.release = tpm_bios_measurements_release,
-};
-
-static int tpm_binary_bios_measurements_open(struct inode *inode,
-					     struct file *file)
-{
-	int err;
-	struct tpm_bios_log *log;
-	struct seq_file *seq;
-
-	log = kzalloc(sizeof(struct tpm_bios_log), GFP_KERNEL);
-	if (!log)
-		return -ENOMEM;
-
-	if ((err = read_log(log)))
-		goto out_free;
-
-	/* now register seq file */
-	err = seq_open(file, &tpm_binary_b_measurments_seqops);
-	if (!err) {
-		seq = file->private_data;
-		seq->private = log;
-	} else {
-		goto out_free;
-	}
-
-out:
-	return err;
-out_free:
-	kfree(log->bios_event_log);
-	kfree(log);
-	goto out;
-}
-
-static const struct file_operations tpm_binary_bios_measurements_ops = {
-	.open = tpm_binary_bios_measurements_open,
-	.read = seq_read,
-	.llseek = seq_lseek,
-	.release = tpm_bios_measurements_release,
-};
-
-static int is_bad(void *p)
-{
-	if (!p)
-		return 1;
-	if (IS_ERR(p) && (PTR_ERR(p) != -ENODEV))
-		return 1;
-	return 0;
-}
-
-struct dentry **tpm_bios_log_setup(char *name)
-{
-	struct dentry **ret = NULL, *tpm_dir, *bin_file, *ascii_file;
-
-	tpm_dir = securityfs_create_dir(name, NULL);
-	if (is_bad(tpm_dir))
-		goto out;
-
-	bin_file =
-	    securityfs_create_file("binary_bios_measurements",
-				   S_IRUSR | S_IRGRP, tpm_dir, NULL,
-				   &tpm_binary_bios_measurements_ops);
-	if (is_bad(bin_file))
-		goto out_tpm;
-
-	ascii_file =
-	    securityfs_create_file("ascii_bios_measurements",
-				   S_IRUSR | S_IRGRP, tpm_dir, NULL,
-				   &tpm_ascii_bios_measurements_ops);
-	if (is_bad(ascii_file))
-		goto out_bin;
-
-	ret = kmalloc(3 * sizeof(struct dentry *), GFP_KERNEL);
-	if (!ret)
-		goto out_ascii;
-
-	ret[0] = ascii_file;
-	ret[1] = bin_file;
-	ret[2] = tpm_dir;
-
-	return ret;
-
-out_ascii:
-	securityfs_remove(ascii_file);
-out_bin:
-	securityfs_remove(bin_file);
-out_tpm:
-	securityfs_remove(tpm_dir);
-out:
-	return NULL;
-}
-
-void tpm_bios_log_teardown(struct dentry **lst)
-{
-	int i;
-
-	for (i = 0; i < 3; i++)
-		securityfs_remove(lst[i]);
-}
