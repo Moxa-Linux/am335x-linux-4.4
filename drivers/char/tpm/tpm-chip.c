@@ -236,7 +236,7 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
 	device_initialize(&chip->devs);
 
 	chip->dev.class = tpm_class;
-	chip->dev.class->shutdown_pre = tpm_class_shutdown;
+	chip->dev.class->shutdown = tpm_class_shutdown;
 	chip->dev.release = tpm_dev_release;
 	chip->dev.parent = pdev;
 	chip->dev.groups = chip->groups;
