@@ -281,8 +281,6 @@ static void omap2_mcspi_set_master_mode(struct spi_master *master)
 	struct omap2_mcspi	*mcspi = spi_master_get_devdata(master);
 	struct omap2_mcspi_regs	*ctx = &mcspi->ctx;
 	u32 l;
-	int i;
-	u32 chconf;
 
 	/*
 	 * Setup when switching from (reset default) slave mode
@@ -294,21 +292,6 @@ static void omap2_mcspi_set_master_mode(struct spi_master *master)
 	mcspi_write_reg(master, OMAP2_MCSPI_MODULCTRL, l);
 
 	ctx->modulctrl = l;
-
-	/*
-	 * Configure all chip-selects on this bus to active-low
-	 *
-	 * NOTE: This requires that _all_ devices on the SPI bus _must_ use
-	 * active-low chip-selects. Active-high chip-selects are not supported!
-	 */
-	for (i = 0; i < master->num_chipselect; i++)
-	{
-		chconf = mcspi_read_reg(master, OMAP2_MCSPI_CHCONF0 + (i * 0x14));
-		chconf |= OMAP2_MCSPI_CHCONF_EPOL;
-		mcspi_write_reg(master, OMAP2_MCSPI_CHCONF0 + (i * 0x14), chconf);
-
-	}
-
 }
 
 static void omap2_mcspi_set_fifo(const struct spi_device *spi,
@@ -1037,8 +1020,7 @@ static int omap2_mcspi_setup(struct spi_device *spi)
 		cs->base = mcspi->base + spi->chip_select * 0x14;
 		cs->phys = mcspi->phys + spi->chip_select * 0x14;
 		cs->mode = 0;
-		/* Configure chip-select as active-low */
-		cs->chconf0 = OMAP2_MCSPI_CHCONF_EPOL;
+		cs->chconf0 = 0;
 		cs->chctrl0 = 0;
 		spi->controller_state = cs;
 		/* Link this to context save list */
