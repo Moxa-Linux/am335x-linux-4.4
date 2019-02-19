@@ -7,9 +7,9 @@ Uploaders: Fero JD Zhou <FeroJD.Zhou@moxa.com>
            SZ Lin (林上智) <sz.lin@moxa.com>
 Standards-Version: 4.1.2
 Build-Depends: debhelper (>= 10),
+               libc6-dev,
                cpio,
                liblz4-tool,
-               libncurses5-dev,
                u-boot-tools,
                kmod,
                bc
