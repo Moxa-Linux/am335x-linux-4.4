@@ -45,6 +45,7 @@ ifeq ($(DEB_HOST_ARCH), armhf)
 	$(MAKE) modules_install \
 		INSTALL_MOD_STRIP=1 \
 		INSTALL_MOD_PATH=$(MODULES_OUTDIR)
+	@find $(MODULES_OUTDIR) -type l -exec rm -f {} +
 endif
 	
 # Create tools
@@ -65,6 +66,7 @@ ifeq ($(DEB_HOST_ARCH), armhf)
 		echo "Module.symvers"; \
 		echo "arch/arm/Makefile"; \
 		echo "arch/arm/kernel/module.lds"; \
+		echo "include/config/auto.conf"; \
 		find arch/arm/ include/ -name "*.h" -o -name "Kbuild" -o -name "*.S"; \
 	) | cpio -pd --preserve-modification-time $(HEADERS_INSTDIR)
 endif
