@@ -45,6 +45,7 @@ ifeq ($(DEB_HOST_ARCH), armhf)
 	$(MAKE) modules_install \
 		INSTALL_MOD_STRIP=1 \
 		INSTALL_MOD_PATH=$(MODULES_OUTDIR)
+	@find $(MODULES_OUTDIR) -type l -exec rm -f {} +
 endif
 	
 # Create tools
