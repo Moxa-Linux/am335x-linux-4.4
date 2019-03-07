@@ -1,0 +1,15 @@
+am335x-linux-4.4 (2.0.1) stretch; urgency=medium
+
+  * fix: remove auto-create link in kernel-modules package
+  * fix: add `include/config/auto.conf` to linux-headers package
+  * fix: add libc6-dev and remove libncurses5-dev from build-dep
+
+ -- Wes Huang <Wes.Huang@moxa.com>  Wed, 20 Feb 2019 10:51:48 +0800
+
+am335x-linux-4.4 (2.0.0) stretch; urgency=medium
+
+  * feat: add UC-3100 kernel package
+  * Import CIP Linux kernel 4.4.
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Mon, 11 Feb 2019 17:14:33 +0800
+
