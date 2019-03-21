@@ -134,10 +134,10 @@ static void musb_h_tx_flush_fifo(struct musb_hw_ep *ep)
 		 * Better to turn on dev_dbg() in musb_cleanup_urb() with
 		 * CPPI enabled to see the issue when aborting the tx channel.
 		 */
-		if (dev_WARN_ONCE(musb->controller, retries-- < 1,
-				"Could not flush host TX%d fifo: csr: %04x\n",
-				ep->epnum, csr))
+		if (retries-- < 1) {
+			dev_printk(KERN_INFO, musb->controller, "Could not flush host TX%d fifo: csr: %04x\n", ep->epnum, csr);
 			return;
+		}
 	}
 }
 
