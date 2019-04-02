@@ -550,13 +550,15 @@ static int vrf_finish_output(struct net *net, struct sock *sk, struct sk_buff *s
 	neigh = __ipv4_neigh_lookup_noref(dev, nexthop);
 	if (unlikely(!neigh))
 		neigh = __neigh_create(&arp_tbl, &nexthop, dev, false);
-	if (!IS_ERR(neigh))
+	if (!IS_ERR(neigh)) {
 		ret = dst_neigh_output(dst, neigh, skb);
+		rcu_read_unlock_bh();
+		return ret;
+	}
 
 	rcu_read_unlock_bh();
 err:
-	if (unlikely(ret < 0))
-		vrf_tx_error(skb->dev, skb);
+	vrf_tx_error(skb->dev, skb);
 	return ret;
 }
 
@@ -733,15 +735,15 @@ static int vrf_del_slave(struct net_device *dev, struct net_device *port_dev)
 static void vrf_dev_uninit(struct net_device *dev)
 {
 	struct net_vrf *vrf = netdev_priv(dev);
-	struct slave_queue *queue = &vrf->queue;
-	struct list_head *head = &queue->all_slaves;
-	struct slave *slave, *next;
+//	struct slave_queue *queue = &vrf->queue;
+//	struct list_head *head = &queue->all_slaves;
+//	struct slave *slave, *next;
 
 	vrf_rtable_destroy(vrf);
 	vrf_rt6_destroy(vrf);
 
-	list_for_each_entry_safe(slave, next, head, list)
-		vrf_del_slave(dev, slave->dev);
+//	list_for_each_entry_safe(slave, next, head, list)
+//		vrf_del_slave(dev, slave->dev);
 
 	free_percpu(dev->dstats);
 	dev->dstats = NULL;
@@ -914,6 +916,14 @@ static int vrf_validate(struct nlattr *tb[], struct nlattr *data[])
 
 static void vrf_dellink(struct net_device *dev, struct list_head *head)
 {
+	struct net_vrf *vrf = netdev_priv(dev);
+	struct slave_queue *queue = &vrf->queue;
+	struct list_head *all_slaves = &queue->all_slaves;
+	struct slave *slave, *next;
+
+	list_for_each_entry_safe(slave, next, all_slaves, list)
+		vrf_del_slave(dev, slave->dev);
+
 	unregister_netdevice_queue(dev, head);
 }
 
