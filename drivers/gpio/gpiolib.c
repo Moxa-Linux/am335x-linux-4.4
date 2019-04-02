@@ -280,7 +280,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
 }
 
 /**
- * gpiochip_add() - register a gpio_chip
+ * gpiochip_add_data() - register a gpio_chip
  * @chip: the chip to register, with chip->base initialized
  * Context: potentially before irqs will work
  *
@@ -288,7 +288,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
  * because the chip->base is invalid or already associated with a
  * different chip.  Otherwise it returns zero as a success code.
  *
- * When gpiochip_add() is called very early during boot, so that GPIOs
+ * When gpiochip_add_data() is called very early during boot, so that GPIOs
  * can be freely used, the chip->dev device must be registered before
  * the gpio framework's arch_initcall().  Otherwise sysfs initialization
  * for GPIOs will fail rudely.
@@ -296,7 +296,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
  * If chip->base is negative, this requests dynamic assignment of
  * a range of valid GPIOs.
  */
-int gpiochip_add(struct gpio_chip *chip)
+int gpiochip_add_data(struct gpio_chip *chip, void *data)
 {
 	unsigned long	flags;
 	int		status = 0;
@@ -307,6 +307,8 @@ int gpiochip_add(struct gpio_chip *chip)
 	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
 	if (!descs)
 		return -ENOMEM;
+
+	chip->data = data;
 
 	spin_lock_irqsave(&gpio_lock, flags);
 
@@ -389,7 +391,7 @@ err_free_descs:
 		chip->label ? : "generic");
 	return status;
 }
-EXPORT_SYMBOL_GPL(gpiochip_add);
+EXPORT_SYMBOL_GPL(gpiochip_add_data);
 
 /**
  * gpiochip_remove() - unregister a gpio_chip
@@ -430,6 +432,79 @@ void gpiochip_remove(struct gpio_chip *chip)
 	chip->desc = NULL;
 }
 EXPORT_SYMBOL_GPL(gpiochip_remove);
+
+static void devm_gpio_chip_release(struct device *dev, void *res)
+{
+	struct gpio_chip *chip = *(struct gpio_chip **)res;
+
+	gpiochip_remove(chip);
+}
+
+static int devm_gpio_chip_match(struct device *dev, void *res, void *data)
+
+{
+	struct gpio_chip **r = res;
+
+	if (!r || !*r) {
+		WARN_ON(!r || !*r);
+		return 0;
+	}
+
+	return *r == data;
+}
+
+/**
+ * devm_gpiochip_add_data() - Resource manager piochip_add_data()
+ * @dev: the device pointer on which irq_chip belongs to.
+ * @chip: the chip to register, with chip->base initialized
+ * Context: potentially before irqs will work
+ *
+ * Returns a negative errno if the chip can't be registered, such as
+ * because the chip->base is invalid or already associated with a
+ * different chip.  Otherwise it returns zero as a success code.
+ *
+ * The gpio chip automatically be released when the device is unbound.
+ */
+int devm_gpiochip_add_data(struct device *dev, struct gpio_chip *chip,
+			   void *data)
+{
+	struct gpio_chip **ptr;
+	int ret;
+
+	ptr = devres_alloc(devm_gpio_chip_release, sizeof(*ptr),
+			     GFP_KERNEL);
+	if (!ptr)
+		return -ENOMEM;
+
+	ret = gpiochip_add_data(chip, data);
+	if (ret < 0) {
+		devres_free(ptr);
+		return ret;
+	}
+
+	*ptr = chip;
+	devres_add(dev, ptr);
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(devm_gpiochip_add_data);
+
+/**
+ * devm_gpiochip_remove() - Resource manager of gpiochip_remove()
+ * @dev: device for which which resource was allocated
+ * @chip: the chip to remove
+ *
+ * A gpio_chip with any GPIOs still requested may not be removed.
+ */
+void devm_gpiochip_remove(struct device *dev, struct gpio_chip *chip)
+{
+	int ret;
+
+	ret = devres_release(dev, devm_gpio_chip_release,
+			     devm_gpio_chip_match, chip);
+	WARN_ON(ret);
+}
+EXPORT_SYMBOL_GPL(devm_gpiochip_remove);
 
 /**
  * gpiochip_find() - iterator for locating a specific gpio_chip
@@ -2117,6 +2192,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
 	struct gpio_desc *desc = NULL;
 	int status;
 	enum gpio_lookup_flags lookupflags = 0;
+	/* Maybe we have a device name, maybe not */
+	const char *devname = dev ? dev_name(dev) : "?";
 
 	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
 
@@ -2145,7 +2222,11 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
 		return desc;
 	}
 
-	status = gpiod_request(desc, con_id);
+	/*
+	 * If a connection label was passed use that, else attempt to use
+	 * the device name as label
+	 */
+	status = gpiod_request(desc, con_id ? con_id : devname);
 	if (status < 0)
 		return ERR_PTR(status);
 

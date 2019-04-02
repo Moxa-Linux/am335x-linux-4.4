@@ -56,6 +56,7 @@
 #include <asm/sh_bios.h>
 #endif
 
+#include "serial_mctrl_gpio.h"
 #include "sh-sci.h"
 
 /* Offsets into the sci_port->irqs array */
@@ -86,6 +87,7 @@ struct sci_port {
 	unsigned int		error_clear;
 	unsigned int		sampling_rate;
 	resource_size_t		reg_size;
+	struct mctrl_gpios	*gpios;
 
 	/* Break timer */
 	struct timer_list	break_timer;
@@ -115,6 +117,8 @@ struct sci_port {
 	struct timer_list		rx_timer;
 	unsigned int			rx_timeout;
 #endif
+
+	bool autorts;
 };
 
 #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
@@ -163,18 +167,17 @@ static const struct plat_sci_reg sci_regmap[SCIx_NR_REGTYPES][SCIx_NR_REGS] = {
 	},
 
 	/*
-	 * Common definitions for legacy IrDA ports, dependent on
-	 * regshift value.
+	 * Common definitions for legacy IrDA ports.
 	 */
 	[SCIx_IRDA_REGTYPE] = {
 		[SCSMR]		= { 0x00,  8 },
-		[SCBRR]		= { 0x01,  8 },
-		[SCSCR]		= { 0x02,  8 },
-		[SCxTDR]	= { 0x03,  8 },
-		[SCxSR]		= { 0x04,  8 },
-		[SCxRDR]	= { 0x05,  8 },
-		[SCFCR]		= { 0x06,  8 },
-		[SCFDR]		= { 0x07, 16 },
+		[SCBRR]		= { 0x02,  8 },
+		[SCSCR]		= { 0x04,  8 },
+		[SCxTDR]	= { 0x06,  8 },
+		[SCxSR]		= { 0x08, 16 },
+		[SCxRDR]	= { 0x0a,  8 },
+		[SCFCR]		= { 0x0c,  8 },
+		[SCFDR]		= { 0x0e, 16 },
 		[SCTFDR]	= sci_reg_invalid,
 		[SCRFDR]	= sci_reg_invalid,
 		[SCSPTR]	= sci_reg_invalid,
@@ -623,7 +626,6 @@ static void sci_poll_put_char(struct uart_port *port, unsigned char c)
 static void sci_init_pins(struct uart_port *port, unsigned int cflag)
 {
 	struct sci_port *s = to_sci_port(port);
-	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
 
 	/*
 	 * Use port-specific handler if provided.
@@ -633,21 +635,28 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
 		return;
 	}
 
-	/*
-	 * For the generic path SCSPTR is necessary. Bail out if that's
-	 * unavailable, too.
-	 */
-	if (!reg->size)
-		return;
+	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+		u16 ctrl = serial_port_in(port, SCPCR);
 
-	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
-	    ((!(cflag & CRTSCTS)))) {
-		unsigned short status;
+		/* Enable RXD and TXD pin functions */
+		ctrl &= ~(SCPCR_RXDC | SCPCR_TXDC);
+		if (to_sci_port(port)->cfg->capabilities & SCIx_HAVE_RTSCTS) {
+			/* RTS# is output, driven 1 */
+			ctrl |= SCPCR_RTSC;
+			serial_port_out(port, SCPDR,
+				serial_port_in(port, SCPDR) | SCPDR_RTSD);
+			/* Enable CTS# pin function */
+			ctrl &= ~SCPCR_CTSC;
+		}
+		serial_port_out(port, SCPCR, ctrl);
+	} else if (sci_getreg(port, SCSPTR)->size) {
+		u16 status = serial_port_in(port, SCSPTR);
 
-		status = serial_port_in(port, SCSPTR);
-		status &= ~SCSPTR_CTSIO;
-		status |= SCSPTR_RTSIO;
-		serial_port_out(port, SCSPTR, status); /* Set RTS = 1 */
+		/* RTS# is output, driven 1 */
+		status |= SCSPTR_RTSIO | SCSPTR_RTSDT;
+		/* CTS# and SCK are inputs */
+		status &= ~(SCSPTR_CTSIO | SCSPTR_SCKIO);
+		serial_port_out(port, SCSPTR, status);
 	}
 }
 
@@ -848,6 +857,8 @@ static void sci_receive_chars(struct uart_port *port)
 		/* Tell the rest of the system the news. New characters! */
 		tty_flip_buffer_push(tport);
 	} else {
+		/* TTY buffers full; read from RX reg to prevent lockup */
+		serial_port_in(port, SCxRDR);
 		serial_port_in(port, SCxSR); /* dummy read */
 		sci_clear_SCxSR(port, SCxSR_RDxF_CLEAR(port));
 	}
@@ -1456,7 +1467,16 @@ static void sci_free_dma(struct uart_port *port)
 	if (s->chan_rx)
 		sci_rx_dma_release(s, false);
 }
-#else
+
+static void sci_flush_buffer(struct uart_port *port)
+{
+	/*
+	 * In uart_flush_buffer(), the xmit circular buffer has just been
+	 * cleared, so we have to reset tx_dma_len accordingly.
+	 */
+	to_sci_port(port)->tx_dma_len = 0;
+}
+#else /* !CONFIG_SERIAL_SH_SCI_DMA */
 static inline void sci_request_dma(struct uart_port *port)
 {
 }
@@ -1464,7 +1484,9 @@ static inline void sci_request_dma(struct uart_port *port)
 static inline void sci_free_dma(struct uart_port *port)
 {
 }
-#endif
+
+#define sci_flush_buffer	NULL
+#endif /* !CONFIG_SERIAL_SH_SCI_DMA */
 
 static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
 {
@@ -1725,6 +1747,46 @@ static unsigned int sci_tx_empty(struct uart_port *port)
 	return (status & SCxSR_TEND(port)) && !in_tx_fifo ? TIOCSER_TEMT : 0;
 }
 
+static void sci_set_rts(struct uart_port *port, bool state)
+{
+	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+		u16 data = serial_port_in(port, SCPDR);
+
+		/* Active low */
+		if (state)
+			data &= ~SCPDR_RTSD;
+		else
+			data |= SCPDR_RTSD;
+		serial_port_out(port, SCPDR, data);
+
+		/* RTS# is output */
+		serial_port_out(port, SCPCR,
+				serial_port_in(port, SCPCR) | SCPCR_RTSC);
+	} else if (sci_getreg(port, SCSPTR)->size) {
+		u16 ctrl = serial_port_in(port, SCSPTR);
+
+		/* Active low */
+		if (state)
+			ctrl &= ~SCSPTR_RTSDT;
+		else
+			ctrl |= SCSPTR_RTSDT;
+		serial_port_out(port, SCSPTR, ctrl);
+	}
+}
+
+static bool sci_get_cts(struct uart_port *port)
+{
+	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+		/* Active low */
+		return !(serial_port_in(port, SCPDR) & SCPDR_CTSD);
+	} else if (sci_getreg(port, SCSPTR)->size) {
+		/* Active low */
+		return !(serial_port_in(port, SCSPTR) & SCSPTR_CTSDT);
+	}
+
+	return true;
+}
+
 /*
  * Modem control is a bit of a mixed bag for SCI(F) ports. Generally
  * CTS/RTS is supported in hardware by at least one port and controlled
@@ -1739,6 +1801,8 @@ static unsigned int sci_tx_empty(struct uart_port *port)
  */
 static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
 {
+	struct sci_port *s = to_sci_port(port);
+
 	if (mctrl & TIOCM_LOOP) {
 		const struct plat_sci_reg *reg;
 
@@ -1751,25 +1815,72 @@ static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
 					serial_port_in(port, SCFCR) |
 					SCFCR_LOOP);
 	}
+
+	mctrl_gpio_set(s->gpios, mctrl);
+
+	if (!(s->cfg->capabilities & SCIx_HAVE_RTSCTS))
+		return;
+
+	if (!(mctrl & TIOCM_RTS)) {
+		/* Disable Auto RTS */
+		serial_port_out(port, SCFCR,
+				serial_port_in(port, SCFCR) & ~SCFCR_MCE);
+
+		/* Clear RTS */
+		sci_set_rts(port, 0);
+	} else if (s->autorts) {
+		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+			/* Enable RTS# pin function */
+			serial_port_out(port, SCPCR,
+				serial_port_in(port, SCPCR) & ~SCPCR_RTSC);
+		}
+
+		/* Enable Auto RTS */
+		serial_port_out(port, SCFCR,
+				serial_port_in(port, SCFCR) | SCFCR_MCE);
+	} else {
+		/* Set RTS */
+		sci_set_rts(port, 1);
+	}
 }
 
 static unsigned int sci_get_mctrl(struct uart_port *port)
 {
+	struct sci_port *s = to_sci_port(port);
+	struct mctrl_gpios *gpios = s->gpios;
+	unsigned int mctrl = 0;
+
+	mctrl_gpio_get(gpios, &mctrl);
+
 	/*
 	 * CTS/RTS is handled in hardware when supported, while nothing
-	 * else is wired up. Keep it simple and simply assert DSR/CAR.
+	 * else is wired up.
 	 */
-	return TIOCM_DSR | TIOCM_CAR;
+	if (s->autorts) {
+		if (sci_get_cts(port))
+			mctrl |= TIOCM_CTS;
+	} else if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_CTS))) {
+		mctrl |= TIOCM_CTS;
+	}
+	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_DSR)))
+		mctrl |= TIOCM_DSR;
+	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_DCD)))
+		mctrl |= TIOCM_CAR;
+
+	return mctrl;
+}
+
+static void sci_enable_ms(struct uart_port *port)
+{
+	mctrl_gpio_enable_ms(to_sci_port(port)->gpios);
 }
 
 static void sci_break_ctl(struct uart_port *port, int break_state)
 {
-	struct sci_port *s = to_sci_port(port);
-	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
 	unsigned short scscr, scsptr;
 
 	/* check wheter the port has SCSPTR */
-	if (!reg->size) {
+	if (!sci_getreg(port, SCSPTR)->size) {
 		/*
 		 * Not supported by hardware. Most parts couple break and rx
 		 * interrupts together, with break detection always enabled.
@@ -1822,6 +1933,9 @@ static void sci_shutdown(struct uart_port *port)
 	unsigned long flags;
 
 	dev_dbg(port->dev, "%s(%d)\n", __func__, port->line);
+
+	s->autorts = false;
+	mctrl_gpio_disable_ms(to_sci_port(port)->gpios);
 
 	spin_lock_irqsave(&port->lock, flags);
 	sci_stop_rx(port);
@@ -2006,15 +2120,18 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
 
 	sci_init_pins(port, termios->c_cflag);
 
+	port->status &= ~UPSTAT_AUTOCTS;
+	s->autorts = false;
 	reg = sci_getreg(port, SCFCR);
 	if (reg->size) {
 		unsigned short ctrl = serial_port_in(port, SCFCR);
 
-		if (s->cfg->capabilities & SCIx_HAVE_RTSCTS) {
-			if (termios->c_cflag & CRTSCTS)
-				ctrl |= SCFCR_MCE;
-			else
-				ctrl &= ~SCFCR_MCE;
+		if ((port->flags & UPF_HARD_FLOW) &&
+		    (termios->c_cflag & CRTSCTS)) {
+			/* There is no CTS interrupt to restart the hardware */
+			port->status |= UPSTAT_AUTOCTS;
+			/* MCE is enabled when RTS is raised */
+			s->autorts = true;
 		}
 
 		/*
@@ -2076,6 +2193,9 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
 		sci_start_rx(port);
 
 	sci_port_disable(s);
+
+	if (UART_ENABLE_MS(port, termios->c_cflag))
+		sci_enable_ms(port);
 }
 
 static void sci_pm(struct uart_port *port, unsigned int state,
@@ -2201,9 +2321,11 @@ static struct uart_ops sci_uart_ops = {
 	.start_tx	= sci_start_tx,
 	.stop_tx	= sci_stop_tx,
 	.stop_rx	= sci_stop_rx,
+	.enable_ms	= sci_enable_ms,
 	.break_ctl	= sci_break_ctl,
 	.startup	= sci_startup,
 	.shutdown	= sci_shutdown,
+	.flush_buffer	= sci_flush_buffer,
 	.set_termios	= sci_set_termios,
 	.pm		= sci_pm,
 	.type		= sci_type,
@@ -2406,13 +2528,12 @@ static void serial_console_write(struct console *co, const char *s,
 	unsigned long flags;
 	int locked = 1;
 
-	local_irq_save(flags);
 	if (port->sysrq)
 		locked = 0;
 	else if (oops_in_progress)
-		locked = spin_trylock(&port->lock);
+		locked = spin_trylock_irqsave(&port->lock, flags);
 	else
-		spin_lock(&port->lock);
+		spin_lock_irqsave(&port->lock, flags);
 
 	/* first save the SCSCR then disable the interrupts */
 	ctrl = serial_port_in(port, SCSCR);
@@ -2429,8 +2550,7 @@ static void serial_console_write(struct console *co, const char *s,
 	serial_port_out(port, SCSCR, ctrl);
 
 	if (locked)
-		spin_unlock(&port->lock);
-	local_irq_restore(flags);
+		spin_unlock_irqrestore(&port->lock, flags);
 }
 
 static int serial_console_setup(struct console *co, char *options)
@@ -2620,6 +2740,9 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
 	p->regtype = info->regtype;
 	p->scscr = SCSCR_RE | SCSCR_TE;
 
+	if (of_find_property(np, "uart-has-rtscts", NULL))
+		p->capabilities |= SCIx_HAVE_RTSCTS;
+
 	return p;
 }
 
@@ -2641,6 +2764,21 @@ static int sci_probe_single(struct platform_device *dev,
 	ret = sci_init_single(dev, sciport, index, p, false);
 	if (ret)
 		return ret;
+
+	sciport->gpios = mctrl_gpio_init(&sciport->port, 0);
+	if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS)
+		return PTR_ERR(sciport->gpios);
+
+	if (p->capabilities & SCIx_HAVE_RTSCTS) {
+		if (!IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
+							UART_GPIO_CTS)) ||
+		    !IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
+							UART_GPIO_RTS))) {
+			dev_err(&dev->dev, "Conflicting RTS/CTS config\n");
+			return -EINVAL;
+		}
+		sciport->port.flags |= UPF_HARD_FLOW;
+	}
 
 	ret = uart_add_one_port(&sci_uart_driver, &sciport->port);
 	if (ret) {
