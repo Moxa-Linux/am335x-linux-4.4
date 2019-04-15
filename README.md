@@ -180,7 +180,7 @@ There following are the list of product kernel configuration files. defconfig is
 * its: am335x-moxa-uc-5100.its
 
 ##### UC-8100A-ME series
-* models: UC-8112A-ME-T-LX, UC-8112A-ME-T-LX-S, UC-8112A-ME-T-LX-US-S, UC-8112A-ME-T-LX-EU-S, UC-8112A-ME-T-LX-AP-S
+* models: UC-8112A-ME-T-LX, UC-8112A-ME-T-LX-US, UC-8112A-ME-T-LX-EU, UC-8112A-ME-T-LX-AP
 * defconfig: uc8100a-me_defconfig
 * dts: am335x-moxa-uc-8100a-me.dts
 * its: am335x-moxa-uc-8100a-me.its
