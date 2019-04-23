@@ -1,3 +1,9 @@
+am335x-linux-4.4 (2.0.2) stretch; urgency=medium
+
+  * feat: add UC2100 kernel package
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Fri, 22 Mar 2019 10:43:02 +0800
+
 am335x-linux-4.4 (2.0.1) stretch; urgency=medium
 
   * fix: remove auto-create link in kernel-modules package

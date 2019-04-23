@@ -52,3 +52,21 @@ Depends: ${misc:Depends},
 Description: UC-3100 standard kernel modules
  The Linux standard kernel modules for UC-3100 Linux kernel image.
  This package contains all kernel modules for AM335x CIP Linux 4.4.
+
+Package: uc2100-kernel
+Architecture: armhf
+Depends: ${misc:Depends},
+         uc2100-modules-std (= ${binary:Version})
+Description: UC-2100 Flattened Image
+ Flattened image includes Linux kernel image and device trees.
+ Device tree describesthe hardware components on the device including
+ its layout. This package contains device trees for all models of Moxa
+ UC-2100 devices.
+
+Package: uc2100-modules-std
+Architecture: armhf
+Depends: ${misc:Depends},
+         kmod
+Description: UC-2100 standard kernel modules
+ The Linux standard kernel modules for UC-2100 Linux kernel image.
+ This package contains all kernel modules for AM335x CIP Linux 4.4.
