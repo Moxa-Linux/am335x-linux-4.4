@@ -1,3 +1,9 @@
+am335x-linux-4.4 (4.4.154+2.1.0) stretch; urgency=medium
+
+  * feat: add PPS support
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Thu, 6 Jun 2019 18:05:11 +0800
+
 am335x-linux-4.4 (2.0.3) stretch; urgency=medium
 
   * (UC5100)refactor: extract common part in device-trees
