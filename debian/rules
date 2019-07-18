@@ -67,6 +67,7 @@ ifeq ($(DEB_HOST_ARCH), armhf)
 		echo "arch/arm/Makefile"; \
 		echo "arch/arm/kernel/module.lds"; \
 		echo "include/config/auto.conf"; \
+		echo "include/config/kernel.release"; \
 		find arch/arm/ include/ -name "*.h" -o -name "Kbuild" -o -name "*.S"; \
 	) | cpio -pd --preserve-modification-time $(HEADERS_INSTDIR)
 endif
