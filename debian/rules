@@ -30,12 +30,16 @@ override_dh_auto_build:
 	@mkdir -p $(MODULES_OUTDIR)
 	@mkdir -p $(ITBS_OUTDIR)
 	@mkdir -p $(SCRIPTS_OUTDIR)
+
 # Configure kernel
 	$(MAKE) $(AM335X_KCONFIG)
-# Compile kernel
-	$(MAKE) -j $(shell nproc)
+# Prepare kernel information & tools needed
+	$(MAKE) prepare
+	$(MAKE) M=scripts
 
 ifeq ($(DEB_HOST_ARCH), armhf)
+# Compile kernel
+	$(MAKE) -j $(shell nproc)
 # Build device-trees & ITBs
 	$(MAKE) dtbs
 	@for number in $(MOXA_ITBS); do \
@@ -47,8 +51,8 @@ ifeq ($(DEB_HOST_ARCH), armhf)
 		INSTALL_MOD_PATH=$(MODULES_OUTDIR)
 	@find $(MODULES_OUTDIR) -type l -exec rm -f {} +
 endif
-	
-# Create tools
+
+# Create kbuild tools
 	$(MAKE) -f debian/Makefile.scripts \
 		OUTDIR=$(SCRIPTS_OUTDIR)
 
