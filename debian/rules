@@ -70,9 +70,6 @@ endif
 override_dh_auto_install:
 	$(info Skip dh_auto_install)
 
-override_dh_install:
-	dh_install
-
 override_dh_strip:
 	dh_strip --no-automatic-dbgsym
 
