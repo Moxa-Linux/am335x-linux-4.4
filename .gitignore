@@ -52,26 +52,6 @@ Module.symvers
 /Module.markers
 
 #
-# Debian directory
-#
-/debian/*.debhelper.log
-/debian/*.substvars
-/debian/*.postinst.debhelper
-/debian/*.postrm.debhelper
-/debian/files
-/debian/debhelper-build-stamp
-/debian/linux-headers-4.4.0-cip-am335x/
-/debian/linux-kbuild-4.4.0-cip-am335x/
-/debian/uc2100-kernel/
-/debian/uc2100-modules-std/
-/debian/uc3100-kernel/
-/debian/uc3100-modules-std/
-/debian/uc5100-kernel/
-/debian/uc5100-modules-std/
-/debian/uc8100a-me-kernel/
-/debian/uc8100a-me-modules-std/
-
-#
 # Temporary output directory
 #
 /output/

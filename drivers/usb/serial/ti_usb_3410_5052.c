@@ -1418,7 +1418,7 @@ static void ti_interrupt_callback(struct urb *urb)
 	switch (function) {
 	case TI_CODE_DATA_ERROR:
 		dgprintk(RAW_DEBUG_LEVEL, "code data error !\n");
-		dev_warn(dev, "%s - DATA ERROR, port %d, data 0x%02X\n",
+		dev_dbg(dev, "%s - DATA ERROR, port %d, data 0x%02X\n",
 			__func__, port_number, data[1]);
 		break;
 

@@ -2296,7 +2296,15 @@ CONFIG_HSI_BOARDINFO=y
 #
 # PPS support
 #
-# CONFIG_PPS is not set
+CONFIG_PPS=m
+# CONFIG_PPS_DEBUG is not set
+
+#
+# PPS clients support
+#
+CONFIG_PPS_CLIENT_KTIMER=m
+CONFIG_PPS_CLIENT_LDISC=m
+CONFIG_PPS_CLIENT_GPIO=m
 
 #
 # PPS generators support
