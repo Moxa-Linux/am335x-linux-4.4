@@ -6,7 +6,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 #export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
-AM335X_KCONFIG := am335x_defconfig
+KERNEL_CONFIG := am335x_defconfig
 KERNEL_NAME := 4.4.0-cip
 MOXA_ITBS := am335x-moxa-uc-2100 \
 	am335x-moxa-uc-3100 \
@@ -20,7 +20,7 @@ SCRIPTS_OUTDIR := $(OUTPUT_DIR)/scripts
 HEADERS_OUTDIR := $(OUTPUT_DIR)/headers/linux-headers-$(KERNEL_NAME)
 
 override_dh_auto_clean:
-	$(MAKE) -j $(shell nproc) distclean
+	$(MAKE) -j $(shell nproc) clean
 	@rm -rf $(OUTPUT_DIR)
 
 override_dh_auto_build:
@@ -32,7 +32,9 @@ override_dh_auto_build:
 	@mkdir -p $(HEADERS_OUTDIR)
 
 # Configure kernel
-	$(MAKE) $(AM335X_KCONFIG)
+	if [ ! -f ".config" ]; then \
+		$(MAKE) $(KERNEL_CONFIG); \
+	fi
 # Prepare kernel information & tools needed
 	$(MAKE) prepare
 	$(MAKE) M=scripts
