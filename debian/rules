@@ -6,7 +6,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 #export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
-AM335X_KCONFIG := am335x_defconfig
+KERNEL_CONFIG := am335x_defconfig
 KERNEL_NAME := 4.4.0-cip
 MOXA_ITBS := am335x-moxa-uc-2100 \
 	am335x-moxa-uc-3100 \
@@ -17,11 +17,10 @@ OUTPUT_DIR := output
 MODULES_OUTDIR := $(OUTPUT_DIR)/modules
 ITBS_OUTDIR := $(OUTPUT_DIR)/itbs
 SCRIPTS_OUTDIR := $(OUTPUT_DIR)/scripts
-
-HEADERS_INSTDIR := debian/linux-headers-4.4.0-cip-am335x/usr/src/linux-headers-$(KERNEL_NAME)
+HEADERS_OUTDIR := $(OUTPUT_DIR)/headers/linux-headers-$(KERNEL_NAME)
 
 override_dh_auto_clean:
-	$(MAKE) -j $(shell nproc) distclean
+	$(MAKE) -j $(shell nproc) clean
 	@rm -rf $(OUTPUT_DIR)
 
 override_dh_auto_build:
@@ -30,12 +29,19 @@ override_dh_auto_build:
 	@mkdir -p $(MODULES_OUTDIR)
 	@mkdir -p $(ITBS_OUTDIR)
 	@mkdir -p $(SCRIPTS_OUTDIR)
+	@mkdir -p $(HEADERS_OUTDIR)
+
 # Configure kernel
-	$(MAKE) $(AM335X_KCONFIG)
-# Compile kernel
-	$(MAKE) -j $(shell nproc)
+	if [ ! -f ".config" ]; then \
+		$(MAKE) $(KERNEL_CONFIG); \
+	fi
+# Prepare kernel information & tools needed
+	$(MAKE) prepare
+	$(MAKE) M=scripts
 
 ifeq ($(DEB_HOST_ARCH), armhf)
+# Compile kernel
+	$(MAKE) -j $(shell nproc)
 # Build device-trees & ITBs
 	$(MAKE) dtbs
 	@for number in $(MOXA_ITBS); do \
@@ -46,19 +52,6 @@ ifeq ($(DEB_HOST_ARCH), armhf)
 		INSTALL_MOD_STRIP=1 \
 		INSTALL_MOD_PATH=$(MODULES_OUTDIR)
 	@find $(MODULES_OUTDIR) -type l -exec rm -f {} +
-endif
-	
-# Create tools
-	$(MAKE) -f debian/Makefile.scripts \
-		OUTDIR=$(SCRIPTS_OUTDIR)
-
-override_dh_auto_install:
-	$(info Skip dh_auto_install)
-
-override_dh_install:
-	dh_install
-
-ifeq ($(DEB_HOST_ARCH), armhf)
 # Copy files needed to kernel header package directory
 	( \
 		echo ".config"; \
@@ -69,8 +62,15 @@ ifeq ($(DEB_HOST_ARCH), armhf)
 		echo "include/config/auto.conf"; \
 		echo "include/config/kernel.release"; \
 		find arch/arm/ include/ -name "*.h" -o -name "Kbuild" -o -name "*.S"; \
-	) | cpio -pd --preserve-modification-time $(HEADERS_INSTDIR)
+	) | cpio -pd --preserve-modification-time $(HEADERS_OUTDIR)
 endif
+
+# Create kbuild tools
+	$(MAKE) -f debian/Makefile.scripts \
+		OUTDIR=$(SCRIPTS_OUTDIR)
+
+override_dh_auto_install:
+	$(info Skip dh_auto_install)
 
 override_dh_strip:
 	dh_strip --no-automatic-dbgsym
