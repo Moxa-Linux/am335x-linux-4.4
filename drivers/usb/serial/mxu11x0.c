@@ -1252,14 +1252,6 @@ static void mxu1_close(struct tty_struct *tty, struct usb_serial_port *port, str
 
 	mxu1_drain(mxport, (mxport->mxp_closing_wait*HZ)/100, 1);
 
-#if(LINUX_VERSION_CODE > KERNEL_VERSION(2,6,8))
-	usb_kill_urb(port->read_urb);
-	usb_kill_urb(port->write_urb);
-#else
-	usb_unlink_urb(port->read_urb);
-	usb_unlink_urb(port->write_urb);
-#endif
-	
 	mxport->mxp_write_urb_in_use = 0;
 	mxport->mxp_read_urb_state = MXU1_READ_URB_STOPPED;
 
@@ -1284,8 +1276,12 @@ static void mxu1_close(struct tty_struct *tty, struct usb_serial_port *port, str
 		/* last port is closed, shut down interrupt urb */
 #if(LINUX_VERSION_CODE > KERNEL_VERSION(2,6,8))
 		usb_kill_urb(port->serial->port[0]->interrupt_in_urb);
+		usb_kill_urb(port->read_urb);
+		usb_kill_urb(port->write_urb);
 #else
 		usb_unlink_urb(port->serial->port[0]->interrupt_in_urb);
+		usb_unlink_urb(port->read_urb);
+		usb_unlink_urb(port->write_urb);
 #endif
 		mxport->mxp_mxdev->mxd_open_port_count = 0;
 	}
