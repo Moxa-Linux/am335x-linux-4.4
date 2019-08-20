@@ -1,3 +1,18 @@
+am335x-linux-4.4 (4.4.154+2.1.1) stretch; urgency=medium
+
+  * fix: disable ethernet bridge vlan filter for UC-8100-LX and UC-8100-ME-T-LX
+  * fix: add include/config/kernel.release into linux-headers package
+  * fix: solve spi flash can't be recognized on the same bus with tpm2 for UC-8100-ME & UC-8100A-ME
+  * fix: no need to build kernel while building kbuild for amd64
+  * fix: install linux-headers to output directory first
+  * fix: override_dh_install is not needed
+  * fix: don't overwrite .config when building packages
+  * fix: upgrade mxu11x0 uport driver to version 1.4
+  * fix: adjust usb_kill_urb sequence to avoid device node crash issue
+  * fix: upgrade UPort 1110/1130/1130I/1150/1150I Firmware to version 1.11
+
+ -- Wes Huang <Wes.Huang@moxa.com>  Tue, 20 Aug 2019 11:32:03 +0800
+
 am335x-linux-4.4 (4.4.154+2.1.0) stretch; urgency=medium
 
   * feat: add PPS support
