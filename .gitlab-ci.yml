@@ -13,7 +13,7 @@ develop_build:
     stage: develop_build
     except:
       refs:
-        - 4.4.154-cip/stretch
+        - stretch
     only:
       variables:
         - $model
@@ -38,7 +38,7 @@ release_build:
     stage: release_build
     only:
       refs:
-        - 4.4.154-cip/stretch
+        - stretch
       variables:
         - $model
     script:
@@ -62,7 +62,9 @@ prepare_develop_debs:
     stage: prepare_develop_debs
     only:
       refs:
-        - 4.4.154-cip/stretch-develop
+        - stretch-develop
+      variables:
+        - $model
     dependencies:
         - develop_build
     when: manual
@@ -77,10 +79,12 @@ prepare_release_debs:
     stage: prepare_release_debs
     only:
       refs:
-        - 4.4.154-cip/stretch
-    when: manual
+        - stretch
+      variables:
+        - $model
     dependencies:
         - release_build
+    when: manual
     script:
         - mkdir -p /cache/stretch/release/
         - cp *.deb /cache/stretch/release/
