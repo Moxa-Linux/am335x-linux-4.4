@@ -1,3 +1,10 @@
+am335x-linux-4.4 (4.4.154+2.1.2) stretch; urgency=medium
+
+  * fix: remove bluetooth config from uc3100 device tree
+  * fix: turn off TI_ST driver by default
+
+ -- Wes Huang <Wes.Huang@moxa.com>  Mon, 26 Aug 2019 17:24:51 +0800
+
 am335x-linux-4.4 (4.4.154+2.1.1) stretch; urgency=medium
 
   * fix: disable ethernet bridge vlan filter for UC-8100-LX and UC-8100-ME-T-LX
