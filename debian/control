@@ -88,3 +88,23 @@ Depends: ${misc:Depends},
 Description: UC-5100 standard kernel modules
  The Linux standard kernel modules for UC-5100 Linux kernel image.
  This package contains all kernel modules for AM335x CIP Linux 4.4.
+
+Package: uc8100me-kernel
+Architecture: armhf
+Depends: ${misc:Depends},
+         uc8100me-modules-std (= ${binary:Version})
+Conflicts: uc8100me-device-tree
+Replaces: uc8100me-device-tree
+Description: UC-8100-ME Flattened Image
+ Flattened image includes Linux kernel image and device trees.
+ Device tree describesthe hardware components on the device including
+ its layout. This package contains device trees for all models of Moxa
+ UC-8100-ME devices.
+
+Package: uc8100me-modules-std
+Architecture: armhf
+Depends: ${misc:Depends},
+         kmod
+Description: UC-8100-ME standard kernel modules
+ The Linux standard kernel modules for UC-8100-ME Linux kernel image.
+ This package contains all kernel modules for AM335x CIP Linux 4.4.
