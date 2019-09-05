@@ -42,7 +42,8 @@ override_dh_auto_build:
 ifeq ($(DEB_HOST_ARCH), armhf)
 # Compile kernel
 	$(MAKE) -j $(shell nproc)
-# Build device-trees & ITBs
+# Build uImage, device-trees, ITBs
+	$(MAKE) uImage
 	$(MAKE) dtbs
 	@for number in $(MOXA_ITBS); do \
 		mkimage -f its/$$number.its $(ITBS_OUTDIR)/$$number.itb; \
