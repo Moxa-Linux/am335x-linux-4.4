@@ -875,6 +875,7 @@ struct tps65910_board {
 	int irq_base;
 	int vmbch_threshold;
 	int vmbch2_threshold;
+	bool en_rtc;
 	bool en_ck32k_xtal;
 	bool en_dev_slp;
 	bool pm_off;

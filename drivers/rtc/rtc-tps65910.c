@@ -225,11 +225,15 @@ static int tps65910_rtc_probe(struct platform_device *pdev)
 {
 	struct tps65910 *tps65910 = NULL;
 	struct tps65910_rtc *tps_rtc = NULL;
+	bool en_rtc;
 	int ret;
 	int irq;
 	u32 rtc_reg;
 
 	tps65910 = dev_get_drvdata(pdev->dev.parent);
+	en_rtc = tps65910->of_plat_data->en_rtc;
+	if (!en_rtc)
+		return 0;
 
 	tps_rtc = devm_kzalloc(&pdev->dev, sizeof(struct tps65910_rtc),
 			GFP_KERNEL);

@@ -418,6 +418,9 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
 	if (!ret)
 		board_info->vmbch2_threshold = prop;
 
+	prop = of_property_read_bool(np, "moxa-uc,enable-rtc");
+	board_info->en_rtc = prop;
+
 	prop = of_property_read_bool(np, "ti,en-ck32k-xtal");
 	board_info->en_ck32k_xtal = prop;
 
