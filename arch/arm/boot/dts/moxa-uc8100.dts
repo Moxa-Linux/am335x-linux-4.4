@@ -390,6 +390,7 @@
 	interrupts = <7>;
 	interrupt-parent = <&intc>;
 
+	moxa-uc,enable-rtc;
 	ti,en-ck32k-xtal;
 
 	vcc1-supply = <&vbat>;
