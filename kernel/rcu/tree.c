@@ -3049,6 +3049,7 @@ static int rcu_cpu_kthread_should_run(unsigned int cpu)
 {
 	return __this_cpu_read(rcu_cpu_has_work);
 }
+early_initcall(rcu_spawn_core_kthreads);
 
 /*
  * Per-CPU kernel thread that invokes RCU callbacks.  This replaces the
