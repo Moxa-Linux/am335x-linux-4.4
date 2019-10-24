@@ -37,21 +37,25 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1 {
 			label = "UC2100:YELLOW:SGN1";
 			gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+
 		led2 {
 			label = "UC2100:YELLOW:SGN2";
 			gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+
 		led3 {
 			label = "UC2100:YELLOW:SGN3";
 			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+
 		led4 {
 			label = "UC2100:GREEN:USER";
 			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
@@ -73,7 +77,7 @@
 			AM33XX_IOPAD(0x98c, PIN_INPUT_PULLUP | MUX_MODE0)    /* i2c0_scl.i2c0_scl */
 		>;
 	};
-	
+
 	push_button_pins: pinmux_push_button {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x8e4, PIN_INPUT_PULLDOWN | MUX_MODE7)    /* lcd_hsync.gpio2_23 */
@@ -274,9 +278,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -293,7 +297,7 @@
 				label = "U-Boot Env";
 				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 

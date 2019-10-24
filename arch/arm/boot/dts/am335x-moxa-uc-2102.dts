@@ -43,11 +43,13 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1 {
 			label = "UC2100:GREEN:USER1";
 			gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
+
 		led2 {
 			label = "UC2100:GREEN:USER2";
 			gpios = <&gpio3 17 GPIO_ACTIVE_HIGH>;
@@ -376,9 +378,9 @@
 		spi-cpha;
 
 		partitions {
-	                compatible = "fixed-partitions";
-	                #address-cells = <1>;
-	                #size-cells = <1>;
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
 			/* reg : The partition's offset and size within the mtd bank. */
 			partitions@0 {
@@ -395,7 +397,7 @@
 				label = "U-Boot Env";
 				reg = <0x180000 0x40000>;
 			};
-	        };
+		};
 	};
 };
 
