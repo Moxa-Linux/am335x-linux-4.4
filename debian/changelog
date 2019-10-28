@@ -1,3 +1,11 @@
+am335x-linux-4.4 (4.4.190+1.0.0) stretch; urgency=medium
+
+  * feat: upgrade to CIP Linux 4.4.190-cip36-rt25
+  * rtc: add enable rtc feature for tps65910 driver
+  * feat: add kernel packages for UC-8100, UC-8100-ME, UC-8100A-ME
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Mon, 28 Oct 2019 15:30:54 +0800
+
 am335x-linux-4.4 (4.4.154+2.1.2) stretch; urgency=medium
 
   * fix: remove bluetooth config from uc3100 device tree
