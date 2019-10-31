@@ -16,16 +16,16 @@ Build-Depends: debhelper (>= 10),
 Homepage: https://www.moxa.com/
 Vcs-Git: http://gitlab.syssw.moxa.com/MXcore-Kernel/am335x-linux-4.4
 
-Package: linux-headers-4.4.0-cip-am335x
+Package: linux-headers-4.4.0-cip-rt-am335x
 Architecture: armhf
 Depends: ${misc:Depends},
-         linux-kbuild-4.4.0-cip-am335x (= ${binary:Version})
+         linux-kbuild-4.4.0-cip-rt-am335x (= ${binary:Version})
 Description: Linux kernel header files for AM335x CIP Linux
  This package provides the kernel header files for AM335x CIP Linux,
  generally used for building out-of-tree kernel modules, and can be used
  for building modules that load into the AM335x CIP Linux kernel.
 
-Package: linux-kbuild-4.4.0-cip-am335x
+Package: linux-kbuild-4.4.0-cip-rt-am335x
 Architecture: amd64 armhf
 Depends: ${misc:Depends},
          ${perl:Depends},
