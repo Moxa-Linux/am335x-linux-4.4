@@ -7,8 +7,8 @@ files
 debhelper-build-stamp
 
 # package tmp dir
-linux-headers-4.4.0-cip-am335x/
-linux-kbuild-4.4.0-cip-am335x/
+linux-headers-4.4.0-cip-rt-am335x/
+linux-kbuild-4.4.0-cip-rt-am335x/
 uc2100-kernel/
 uc2100-modules-std/
 uc3100-kernel/
