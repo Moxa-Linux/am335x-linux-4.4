@@ -7,7 +7,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 KERNEL_CONFIG := am335x_defconfig
-KERNEL_NAME := 4.4.0-cip
+KERNEL_NAME := 4.4.0-cip-rt-am335x
 MOXA_ITBS := am335x-moxa-uc-2100 \
 	am335x-moxa-uc-3100 \
 	am335x-moxa-uc-5100 \

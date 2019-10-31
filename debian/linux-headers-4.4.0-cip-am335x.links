@@ -1,2 +1,2 @@
-/usr/src/linux-headers-4.4.0-cip/ /lib/modules/4.4.0-cip/build
-/usr/src/linux-kbuild-4.4.0-cip/scripts/ /usr/src/linux-headers-4.4.0-cip/scripts
+/usr/src/linux-headers-4.4.0-cip-rt-am335x/ /lib/modules/4.4.0-cip-rt-am335x/build
+/usr/src/linux-kbuild-4.4.0-cip-rt-am335x/scripts/ /usr/src/linux-headers-4.4.0-cip-rt-am335x/scripts

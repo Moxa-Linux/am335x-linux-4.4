@@ -1,3 +1,3 @@
 arch/arm/boot/uImage /var/tmp/p1/
-arch/arm/boot/dts/am335x-moxa-uc-8100-me.dtb /var/tmp/p1/
-arch/arm/boot/dts/moxa-uc8100.dts /var/tmp/p1/
+arch/arm/boot/dts/am335x-moxa-uc-8100.dtb /var/tmp/p1/
+arch/arm/boot/dts/moxa-uc8100.dtb /var/tmp/p1/

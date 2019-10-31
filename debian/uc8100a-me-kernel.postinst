@@ -22,7 +22,7 @@ configure)
 	if cat /proc/cmdline | grep -q "mmcblk"; then
 		ROOT_PART="$(cat /proc/cmdline | sed -e 's/^.*root=//' -e 's/ .*$//')"
 		PART1_DEV="${ROOT_PART%%p2}p1"
-		KERNEL_SYMBOL_NAME="4.4.0-cip"
+		KERNEL_SYMBOL_NAME="4.4.0-cip-rt-am335x"
 
 		if mount | grep -q "${PART1_DEV}"; then
 			umount ${PART1_DEV}
