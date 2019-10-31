@@ -1,3 +1,9 @@
+am335x-linux-4.4 (4.4.190+1.0.1) stretch; urgency=medium
+
+  * fix: change kernel vermagic to `4.4.0-cip-rt-am335x`
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Thu, 31 Oct 2019 11:15:35 +0800
+
 am335x-linux-4.4 (4.4.190+1.0.0) stretch; urgency=medium
 
   * feat: upgrade to CIP Linux 4.4.190-cip36-rt25
