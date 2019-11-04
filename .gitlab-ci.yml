@@ -14,9 +14,6 @@ develop_build:
     except:
       refs:
         - 4.4.190-cip36-rt25/stretch/master
-    only:
-      variables:
-        - $model
     script:
         - dpkg --add-architecture armhf
         - echo "deb http://mil-internal-apt:8080/mirror-debian_20190909 stretch main contrib non-free" > /etc/apt/sources.list
@@ -25,8 +22,7 @@ develop_build:
         - apt-get install crossbuild-essential-armhf libc6-dev:armhf cpio -y --allow-unauthenticated
         - dpkg-buildpackage -us -uc -b -aarmhf
         - dpkg-buildpackage -us -uc -b
-        - mv ../linux*.deb .
-        - mv ../"${model}"*.deb .
+        - mv ../*.deb .
         - mv ../*.buildinfo .
         - mv ../*.changes .
     artifacts:
@@ -43,8 +39,6 @@ release_build:
     only:
       refs:
         - 4.4.190-cip36-rt25/stretch/master
-      variables:
-        - $model
     script:
         - dpkg --add-architecture armhf
         - echo "deb http://mil-internal-apt:8080/mirror-debian_20190909 stretch main contrib non-free" > /etc/apt/sources.list
@@ -53,8 +47,7 @@ release_build:
         - apt-get install crossbuild-essential-armhf libc6-dev:armhf cpio -y --allow-unauthenticated
         - dpkg-buildpackage -us -uc -b -aarmhf
         - dpkg-buildpackage -us -uc -b
-        - mv ../linux*.deb .
-        - mv ../"${model}"*.deb .
+        - mv ../*.deb .
         - mv ../*.buildinfo .
         - mv ../*.changes .
     artifacts:
@@ -71,8 +64,6 @@ prepare_develop_debs:
     only:
       refs:
         - 4.4.190-cip36-rt25/stretch/develop
-      variables:
-        - $model
     dependencies:
         - develop_build
     when: manual
@@ -88,8 +79,6 @@ prepare_release_debs:
     only:
       refs:
         - 4.4.190-cip36-rt25/stretch/master
-      variables:
-        - $model
     dependencies:
         - release_build
     when: manual
