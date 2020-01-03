@@ -1,9 +1,10 @@
+// SPDX-License-Identifier: GPL-2.0
 /*
- * Copyright (C) 2015 MOXA Inc. - http://www.moxa.com/
+ * Copyright (C) 2015 MOXA Inc. - https://www.moxa.com/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Authors: SZ Lin (林上智) <sz.lin@moxa.com>
+ *          Wes Huang (黃淵河) <wes.huang@moxa.com>
+ *          Ken CJ Chou <KenCJ.Chou@moxa.com>
  */
 
 /dts-v1/;
