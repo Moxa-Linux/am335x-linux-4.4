@@ -11,7 +11,7 @@
 #include "am33xx.dtsi"
 
 / {
-	model = "MOXA UC-8100A-ME";
+	model = "Moxa UC-8100A-ME";
 	compatible = "ti,uc-8100a-me", "ti,am33xx";
 
 	cpus {
