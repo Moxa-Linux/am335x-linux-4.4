@@ -7,9 +7,8 @@
 
 /dts-v1/;
 
-#include "am33xx.dtsi"
-#include <dt-bindings/net/ti-dp83867.h>
 #include <dt-bindings/interrupt-controller/irq.h>
+#include "am33xx.dtsi"
 
 / {
 	model = "Moxa UC-3111";

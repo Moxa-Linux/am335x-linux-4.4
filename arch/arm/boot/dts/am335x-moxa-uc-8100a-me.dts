@@ -9,8 +9,6 @@
 /dts-v1/;
 
 #include "am33xx.dtsi"
-#include <dt-bindings/pwm/pwm.h>
-#include <dt-bindings/interrupt-controller/irq.h>
 
 / {
 	model = "MOXA UC-8100A-ME";
