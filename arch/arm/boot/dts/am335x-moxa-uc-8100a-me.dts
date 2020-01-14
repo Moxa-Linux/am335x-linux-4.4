@@ -1,19 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0
 /*
- * Copyright (C) 2015 MOXA Inc. - http://www.moxa.com/
+ * Copyright (C) 2018 MOXA Inc. - https://www.moxa.com/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Authors: Wes Huang (黃淵河) <wes.huang@moxa.com>
+ *          Fero JD Zhou (周俊達) <FeroJD.Zhou@moxa.com>
  */
 
 /dts-v1/;
 
 #include "am33xx.dtsi"
-#include <dt-bindings/pwm/pwm.h>
-#include <dt-bindings/interrupt-controller/irq.h>
 
 / {
-	model = "MOXA UC-8100A-ME";
+	model = "Moxa UC-8100A-ME";
 	compatible = "ti,uc-8100a-me", "ti,am33xx";
 
 	cpus {

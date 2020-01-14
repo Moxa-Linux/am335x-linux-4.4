@@ -1,18 +1,14 @@
+// SPDX-License-Identifier: GPL-2.0
 /*
  * Copyright (C) 2017 MOXA Inc. - https://www.moxa.com/
  *
- * Author: Wes Huang (黃淵河) <wes.huang@moxa.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Authors: Wes Huang (黃淵河) <wes.huang@moxa.com>
  */
 
 /dts-v1/;
 
-#include "am33xx.dtsi"
-#include <dt-bindings/net/ti-dp83867.h>
 #include <dt-bindings/interrupt-controller/irq.h>
+#include "am33xx.dtsi"
 
 / {
 	model = "Moxa UC-3111";
