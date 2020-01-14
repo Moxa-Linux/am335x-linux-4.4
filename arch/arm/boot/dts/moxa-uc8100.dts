@@ -16,6 +16,12 @@
 	model = "Moxa UC-8100 HW1.2";
 	compatible = "ti,moxa-uc8100", "ti,am33xx";
 
+	aliases {
+		serial0 = &uart0;
+		serial1 = &uart1;
+		serial2 = &uart5;
+	};
+
 	cpus {
 		cpu@0 {
 			cpu0-supply = <&vdd1_reg>;
