@@ -3,42 +3,12 @@ variables:
 
 stages:
     - develop_build
-    - release_build
     - prepare_develop_debs
-    - prepare_release_debs
 
 develop_build:
     tags:
         - Runner-Stretch
     stage: develop_build
-    except:
-      refs:
-        - 4.4.190-cip36-rt25/stretch/master
-    script:
-        - dpkg --add-architecture armhf
-        - echo "deb http://mil-internal-apt:8080/mirror-debian_20190909 stretch main contrib non-free" > /etc/apt/sources.list
-        - curl -fsSL http://mil-internal-apt:8080/mil_internal_apt.gpg | apt-key add -
-        - apt-get update
-        - apt-get install crossbuild-essential-armhf libc6-dev:armhf cpio -y --allow-unauthenticated
-        - dpkg-buildpackage -us -uc -b -aarmhf
-        - dpkg-buildpackage -us -uc -b
-        - mv ../*.deb .
-        - mv ../*.buildinfo .
-        - mv ../*.changes .
-    artifacts:
-        name: "${CI_PROJECT_NAME}"
-        paths:
-        - ./*.deb
-        - ./*.buildinfo
-        - ./*.changes
-
-release_build:
-    tags:
-        - Runner-Stretch
-    stage: release_build
-    only:
-      refs:
-        - 4.4.190-cip36-rt25/stretch/master
     script:
         - dpkg --add-architecture armhf
         - echo "deb http://mil-internal-apt:8080/mirror-debian_20190909 stretch main contrib non-free" > /etc/apt/sources.list
@@ -63,7 +33,7 @@ prepare_develop_debs:
     stage: prepare_develop_debs
     only:
       refs:
-        - 4.4.190-cip36-rt25/stretch/develop
+        - 4.4.190-cip36-rt25/stretch/master
     dependencies:
         - develop_build
     when: manual
@@ -71,18 +41,3 @@ prepare_develop_debs:
         - mkdir -p /cache/stretch/develop/
         - cp *.deb /cache/stretch/develop/
         - ls /cache/stretch/develop/
-
-prepare_release_debs:
-    tags:
-        - Runner-Stretch
-    stage: prepare_release_debs
-    only:
-      refs:
-        - 4.4.190-cip36-rt25/stretch/master
-    dependencies:
-        - release_build
-    when: manual
-    script:
-        - mkdir -p /cache/stretch/release/
-        - cp *.deb /cache/stretch/release/
-        - ls /cache/stretch/release/
