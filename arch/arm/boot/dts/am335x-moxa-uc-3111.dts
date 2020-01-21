@@ -153,18 +153,6 @@
 		};
 	};
 
-	kim {
-		compatible = "kim";
-		dev_name = "/dev/ttyS5";
-		nshutdown_gpio = <485>;
-		flow_cntrl = <1>;
-		baud_rate = <115200>;
-	};
-
-	btwilink {
-		compatible = "btwilink";
-	};
-
 	buttons: push_button {
 		compatible = "gpio-keys";
 	};
