@@ -1,3 +1,10 @@
+am335x-linux-4.4 (4.4.190+1.0.2) stretch; urgency=medium
+
+  * Apply standard device tree model for all Moxa device trees
+  * Support cellular module Sierra WP76XX
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Tue, 21 Jan 2020 10:54:53 +0800
+
 am335x-linux-4.4 (4.4.190+1.0.1) stretch; urgency=medium
 
   * fix: change kernel vermagic to `4.4.0-cip-rt-am335x`
