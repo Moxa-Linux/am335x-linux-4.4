@@ -18,8 +18,8 @@ set -e
 # the debian-policy package
 
 case "$1" in
-configure)
-        depmod 4.4.0-cip-rt-am335x
+configure|triggered)
+        depmod "4.4.0-cip-rt-am335x"
 	;;
 
 abort-upgrade|abort-remove|abort-deconfigure)
