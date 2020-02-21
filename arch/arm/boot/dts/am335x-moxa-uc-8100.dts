@@ -251,13 +251,6 @@
 
 #include "tps65910.dtsi"
 &tps {
-	pinctrl-0 = <&tps_pins>;
-
-	interrupts = <7>;
-	interrupt-parent = <&intc>;
-
-	ti,en-ck32k-xtal;
-
 	vcc1-supply = <&vbat>;
 	vcc2-supply = <&vbat>;
 	vcc3-supply = <&vbat>;
@@ -333,14 +326,6 @@
 			regulator-max-microvolt = <3300000>;
 			regulator-always-on;
 		};
-	};
-};
-
-&am33xx_pinmux {
-	tps_pins: pinmux_tps_pins {
-		pinctrl-single,pins = <
-			AM33XX_IOPAD(0x9a0, PIN_INPUT | MUX_MODE7) /* mcasp0_aclkr.gpio3_18 */
-		>;
 	};
 };
 
