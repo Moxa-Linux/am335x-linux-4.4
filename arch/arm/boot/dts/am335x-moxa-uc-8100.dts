@@ -22,6 +22,48 @@
 		};
 	};
 
+	cpu0_opp_table: opp_table0 {
+		opp50@300000000 {
+			status = "okay";
+		};
+
+		opp100@275000000 {
+			status = "disabled";
+		};
+
+		opp100@300000000 {
+			status = "disabled";
+		};
+
+		opp100@500000000 {
+			status = "disabled";
+		};
+
+		opp100@600000000 {
+			status = "okay";
+		};
+
+		opp120@600000000 {
+			status = "disabled";
+		};
+
+		opp120@720000000 {
+			status = "okay";
+		};
+
+		oppturbo@720000000 {
+			status = "disabled";
+		};
+
+		oppturbo@800000000 {
+			status = "disabled";
+		};
+
+		oppnitro@1000000000 {
+			status = "okay";
+		};
+	};
+
 	memory {
 		device_type = "memory";
 		reg = <0x80000000 0x20000000>; /* 512 MB */
@@ -209,13 +251,6 @@
 
 #include "tps65910.dtsi"
 &tps {
-	pinctrl-0 = <&tps_pins>;
-
-	interrupts = <7>;
-	interrupt-parent = <&intc>;
-
-	ti,en-ck32k-xtal;
-
 	vcc1-supply = <&vbat>;
 	vcc2-supply = <&vbat>;
 	vcc3-supply = <&vbat>;
@@ -291,14 +326,6 @@
 			regulator-max-microvolt = <3300000>;
 			regulator-always-on;
 		};
-	};
-};
-
-&am33xx_pinmux {
-	tps_pins: pinmux_tps_pins {
-		pinctrl-single,pins = <
-			AM33XX_IOPAD(0x9a0, PIN_INPUT | MUX_MODE7) /* mcasp0_aclkr.gpio3_18 */
-		>;
 	};
 };
 
