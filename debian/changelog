@@ -1,3 +1,9 @@
+am335x-linux-4.4 (4.4.190+1.1.2) stretch; urgency=medium
+
+  * Probe vfat module before upgrade for UC-8100A-ME-LX
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Wed, 26 Feb 2020 17:19:15 +0800
+
 am335x-linux-4.4 (4.4.190+1.1.1) stretch; urgency=medium
 
   * Add cpu_opp_table for UC-8100-LX device tree
