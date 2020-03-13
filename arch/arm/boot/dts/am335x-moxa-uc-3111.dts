@@ -656,3 +656,6 @@
 	};
 };
 
+&wdt2 {
+	status = "disabled";
+};
