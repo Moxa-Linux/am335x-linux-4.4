@@ -407,6 +407,11 @@
 	};
 };
 
+/* Watchdog */
+&wdt2 {
+	status = "disabled";
+};
+
 /* GPIO */
 &gpio0 {
 	ti,no-reset-on-init;
