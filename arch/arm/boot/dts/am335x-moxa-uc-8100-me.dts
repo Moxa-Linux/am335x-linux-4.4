@@ -597,3 +597,7 @@
 		spi-max-frequency = <500000>;
 	};
 };
+
+&wdt2 {
+	status = "disabled";
+};
