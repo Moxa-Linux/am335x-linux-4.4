@@ -502,6 +502,9 @@
 
 /* MiniPCIe Slot */
 &am33xx_pinmux {
+	pinctrl-names = "default";
+	pinctrl-0 = <&minipcie_pins>;
+
 	minipcie_pins: pinmux_minipcie {
 		pinctrl-single,pins = <
 			AM33XX_IOPAD(0x8e0 ,PIN_INPUT_PULLUP | MUX_MODE7)   /* lcd_vsync.gpio2_22 */
