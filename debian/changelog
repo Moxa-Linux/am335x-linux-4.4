@@ -1,0 +1,5 @@
+am335x-linux-4.4 (4.4.75+1.0.0) stretch; urgency=medium
+
+  * Initial release
+
+ -- Remus Wu <remusty.wu@moxa.com>  Fri, 17 Apr 2020 10:56:35 +0800

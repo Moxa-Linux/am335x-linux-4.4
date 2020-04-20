@@ -1,0 +1,47 @@
+variables:
+    GIT_DEPTH: "1"
+
+stages:
+    - mil-internal-release_build
+    - prepare_mil-internal-release_debs
+
+mil-internal-release_build:
+    tags:
+        - Runner-Stretch
+    stage: mil-internal-release_build
+    before_script:
+        - echo "deb http://mil-internal-apt:8080/mirror-debian_20200211 stretch main" > /etc/apt/sources.list
+        - curl -fsSL http://mil-internal-apt:8080/mil_internal_apt.gpg | apt-key add -
+        - dpkg --add-architecture armhf
+        - apt-get update
+        - apt-get install -qqy --allow-unauthenticated
+          debhelper device-tree-compiler u-boot-tools
+          build-essential
+          crossbuild-essential-armhf
+        - apt-get build-dep -qqy ./
+    script:
+        - dpkg-buildpackage -us -uc -tc -b -aarmhf
+        - mv ../*.deb .
+        - mv ../*.buildinfo .
+        - mv ../*.changes .
+    artifacts:
+        name: "${CI_PROJECT_NAME}"
+        paths:
+        - ./*.deb
+        - ./*.buildinfo
+        - ./*.changes
+
+prepare_mil-internal-release_debs:
+    tags:
+        - Runner-Stretch
+    stage: prepare_mil-internal-release_debs
+    only:
+      refs:
+        - 4.4.75-cip7-rt2/stretch/master
+    dependencies:
+        - mil-internal-release_build
+    when: manual
+    script:
+        - mkdir -p /cache/stretch/mil-internal-release/
+        - cp *.deb /cache/stretch/mil-internal-release/
+        - ls /cache/stretch/mil-internal-release/
