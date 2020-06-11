@@ -1,38 +1,45 @@
 # Moxa Kernel Repository Guidelines
 
-## Table Of Contents
-* Getting Started
-* How to update kernel
-* Products List
-* Appendix
+## Build Instructions Table
 
----
-## Getting Started
+| Branch / Tags | Build Instructions |
+| - | - |
+| UC-2100_V1.6 <br>UC-3100_V1.2 <br>UC-5100_V1.2 <br>UC-8100_V3.2 <br>4.4.190-cip36-rt25/stretch/master | [Latest Instructions](README.md`Latest`) |
+| UC-3100_V1.0, UC-3100_V1.1 <br> UC-5100_V1.0, UC-5100_V1.1 <br> UC-8100_V3.0, UC-8100_V3.1 <br> UC-2100_V1.2, UC-2100_V1.3, UC-2100_V1.4, UC-2100_V1.5 <br> UC-8100-ME_V3.0, UC-8100A-ME_V1.0, UC-8100A-ME_V1.1, UC-8100A-ME_V1.2, UC-8100A-ME_V1.3 | Below Instructions |
 
-### Check out the kernel source:
+## Download source
 
-#### If you want to build the latest am335x-linux-4.4 kernel source code. Please make sure you are at develop branch.
+To obtain the am335x-linux-4.4 sources you must clone them as below:
+
+```
+git clone https://github.com/Moxa-Linux/am335x-linux-4.4
+```
+
+## To show all branches execute below command:
+
 ```
 # git branch -a
 ```
 
-#### If you want to build the specific version of am335x-linux-4.4 kernel source code. Please checkout the kernel source using tag.
+### To show all the tags.
 
-##### To show all the tags.
 ```
 # git tag
 ```
 
-##### Checkout kernel source by using tag:
+If you want to build the specific version of am335x-linux-4.4 kernel source code, please checkout the kernel source using tag.
+
+### Checkout kernel source by using tag:
 ```
 # git checkout <product>_V<version>
 ```
-### Steps to compile the kernel:
 
-The detail model support list, default kernel configuration, dts file, its file and kernel type information can be found at "Product List" below.
+## Steps to compile the kernel:
+
+The detail model support list, default kernel configuration, dts file, its file and kernel type information can be found at [Product List](OLD_GUIDELINE.md#products-list) below.
 
 
-#### 1. Set default config.
+### 1. Set default config.
 ```
 # make <product>_defconfig
 ```
@@ -41,7 +48,7 @@ Example:
 # make uc2100_defconfig
 ```
 
-#### 2. Compile kernel and create zImage file.
+### 2. Compile kernel and create zImage file.
 ```
 # make -j[jobs]
 ```
@@ -59,7 +66,7 @@ Example:
 # make am335x-moxa-uc-8100.dtb
 ```
 
-#### 4. Strip and install kernel modules:
+### 3. Strip and install kernel modules:
 ```
 # make INSTALL_MOD_STRIP=1 modules_install INSTALL_MOD_PATH=<YOUR DIRECTORY>
 ```
@@ -68,7 +75,7 @@ Example:
 # make INSTALL_MOD_STRIP=1 modules_install INSTALL_MOD_PATH=/tmp
 ```
 
-#### 5. Create uImage file or build itb file.
+### 4. Create uImage file or build itb file.
 
 To build itb file, please make sure all the <product> dtb and zImage are exist. (For itb kernel type product.)
 ```
