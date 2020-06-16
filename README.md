@@ -42,6 +42,7 @@ To build kernel package execute the following commands:
 ```
 # docker start -ia <container_id>
 # cd /workspace/am335x-linux-4.4
+# apt-get build-dep -aarmhf .
 # dpkg-buildpackage -us -uc -b -aarmhf
 ```
 
