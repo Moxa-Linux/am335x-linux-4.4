@@ -1,3 +1,9 @@
+am335x-linux-4.4 (4.4.190+1.1.5) stretch; urgency=medium
+
+  * Add initrd support
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Tue, 04 Aug 2020 19:08:29 +0800
+
 am335x-linux-4.4 (4.4.190+1.1.4) stretch; urgency=medium
 
   * Fix issue that u-blox module cannot probe successfully on UC-8100A-ME-T-LX 
