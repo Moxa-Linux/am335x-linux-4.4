@@ -38,6 +38,6 @@ prepare_develop_debs:
         - develop_build
     when: manual
     script:
-        - mkdir -p /cache/stretch/develop/
-        - cp *.deb /cache/stretch/develop/
-        - ls /cache/stretch/develop/
+        - mkdir -p /cache/stretch/mil-internal-release/
+        - cp *.deb /cache/stretch/mil-internal-release/
+        - ls /cache/stretch/mil-internal-release/
