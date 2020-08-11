@@ -1,3 +1,9 @@
+am335x-linux-4.4 (4.4.190+1.1.6) stretch; urgency=medium
+
+  * Update initrd to version 1.0.1
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Tue, 11 Aug 2020 18:38:32 +0800
+
 am335x-linux-4.4 (4.4.190+1.1.5) stretch; urgency=medium
 
   * Add initrd support
