@@ -52,6 +52,10 @@
 	};
 };
 
+&mac {
+	slaves = <0x1>;
+};
+
 &cpsw_emac0 {
 	status = "okay";
 	phy_id = <&davinci_mdio>, <0x4>;
