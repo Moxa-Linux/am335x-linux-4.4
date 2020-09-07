@@ -12,6 +12,10 @@
 / {
 	model = "Moxa UC-2116";
 	compatible = "moxa,uc-2116", "ti,am33xx";
+
+	aliases {
+		serial1 = &uart5; /* assign uart5 to /dev/ttyS1 */
+	};
 };
 
 &am33xx_pinmux {
