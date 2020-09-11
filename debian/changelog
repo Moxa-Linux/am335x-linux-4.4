@@ -1,3 +1,10 @@
+am335x-linux-4.4 (4.4.190+1.1.7) stretch; urgency=medium
+
+  * Set only one mac slave for UC-2101 and UC-2104
+  * Fixed GPS port to /dev/ttyS1 for UC-2116
+
+ -- Ken CJ Chou <KenCJ.Chou@moxa.com>  Tue, 08 Sep 2020 10:35:02 +0800
+
 am335x-linux-4.4 (4.4.190+1.1.6) stretch; urgency=medium
 
   * Update initrd to version 1.0.1
