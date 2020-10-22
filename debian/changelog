@@ -1,3 +1,9 @@
+am335x-linux-4.4 (4.4.190+1.1.8) stretch; urgency=medium
+
+  * Fix UC-3100 series 'Failed to add OPP, -17' issue
+
+ -- Wes Huang <Wes.Huang@moxa.com>  Wed, 21 Oct 2020 23:02:28 -0400
+
 am335x-linux-4.4 (4.4.190+1.1.7) stretch; urgency=medium
 
   * Set only one mac slave for UC-2101 and UC-2104
