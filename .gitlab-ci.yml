@@ -9,12 +9,14 @@ develop_build:
     tags:
         - Runner-Stretch
     stage: develop_build
-    script:
+    before_script:
         - dpkg --add-architecture armhf
-        - echo "deb http://mil-internal-apt:8080/mirror-debian_20190909 stretch main contrib non-free" > /etc/apt/sources.list
+        - echo "deb http://mil-internal-apt:8080/mirror-debian_20200718/debian stretch main contrib non-free" > /etc/apt/sources.list
         - curl -fsSL http://mil-internal-apt:8080/mil_internal_apt.gpg | apt-key add -
         - apt-get update
         - apt-get install crossbuild-essential-armhf libc6-dev:armhf cpio -y --allow-unauthenticated
+        - apt-get build-dep -y ./
+    script:
         - dpkg-buildpackage -us -uc -b -aarmhf
         - dpkg-buildpackage -us -uc -b
         - mv ../*.deb .
