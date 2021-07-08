@@ -47,8 +47,8 @@
 #include "UPort1650_8FW.h"
 #include "UPort1610_16FW.h"
 #include "UPort1650_16FW.h"
-#include "mx-uport.h"
-#include "../mxusbserial/mxusb-serial.h"
+#include "mxuport.h"
+#include "mxusb-serial.h"
 
 /*
  *  Global variables

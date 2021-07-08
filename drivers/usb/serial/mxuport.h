@@ -13,10 +13,10 @@
 /*
  *  Definitions for driver info
  */
-#include "mx_ver.h"
 #define DRIVER_AUTHOR               "Danny Lin <danny.lin@moxa.com>"
 #define DRIVER_DESC                 "MOXA UPort series driver"
 #define DRIVER_LICENSE              "GPL"
+#define DRIVER_VERSION              "ver4.0.5"
 
 /*
  * Definitions for the vendor ID and device ID 
