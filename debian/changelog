@@ -1,3 +1,10 @@
+am335x-linux-4.4 (4.4.190+1.1.9) stretch; urgency=medium
+
+  [Changed]
+  * Add uport driver v4.0.5 to replace original one
+
+ -- Sin-Ru Lu <ChrisSR_Lu@moxa.com>  Thu, 08 Jul 2021 15:44:19 +0800
+
 am335x-linux-4.4 (4.4.190+1.1.8) stretch; urgency=medium
 
   * Fix UC-3100 series 'Failed to add OPP, -17' issue
