@@ -11,23 +11,28 @@ develop_build:
     stage: develop_build
     before_script:
         - dpkg --add-architecture armhf
-        - echo "deb http://mil-internal-apt:8080/mirror-debian_20200718/debian stretch main contrib non-free" > /etc/apt/sources.list
-        - curl -fsSL http://mil-internal-apt:8080/mil_internal_apt.gpg | apt-key add -
+        - echo "deb http://ibg-linux-apt.moxa.com:8080/mirror-stretch/Debian9.13_20200718/ stretch main" > /etc/apt/sources.list.d/moxa.source.list
+        - echo "deb http://ibg-linux-apt.moxa.com:8080/mirror-stretch-security/20210703/ stretch-updates main" >> /etc/apt/sources.list.d/moxa.source.list
+        - curl -fsSL http://ibg-linux-apt.moxa.com:8080/ibg-linux-apt.gpg | apt-key add -
         - apt-get update
         - apt-get install crossbuild-essential-armhf libc6-dev:armhf cpio -y --allow-unauthenticated
         - apt-get build-dep -y ./
     script:
-        - dpkg-buildpackage -us -uc -b -aarmhf
+        - dpkg-buildpackage -us -uc -aarmhf
         - dpkg-buildpackage -us -uc -b
         - mv ../*.deb .
         - mv ../*.buildinfo .
         - mv ../*.changes .
+        - mv ../*.tar.* .
+        - mv ../*.dsc .
     artifacts:
         name: "${CI_PROJECT_NAME}"
         paths:
         - ./*.deb
         - ./*.buildinfo
         - ./*.changes
+        - ./*.tar*
+        - ./*.dsc
 
 prepare_develop_debs:
     tags:
@@ -40,6 +45,6 @@ prepare_develop_debs:
         - develop_build
     when: manual
     script:
-        - mkdir -p /cache/stretch/mil-internal-release/
-        - cp *.deb /cache/stretch/mil-internal-release/
-        - ls /cache/stretch/mil-internal-release/
+        - mkdir -p /cache/stretch/mil1-internal-release/
+        - cp *.deb /cache/stretch/mil1-internal-release/
+        - ls /cache/stretch/mil1-internal-release/
