@@ -10,6 +10,8 @@ usbserial-y := usb-serial.o generic.o bus.o
 
 usbserial-$(CONFIG_USB_SERIAL_CONSOLE)	+= console.o
 
+mxusbserial-objs := mxusb-serial-0.o mxbus.o mxgeneric-0.o
+
 obj-$(CONFIG_USB_SERIAL_AIRCABLE)		+= aircable.o
 obj-$(CONFIG_USB_SERIAL_ARK3116)		+= ark3116.o
 obj-$(CONFIG_USB_SERIAL_BELKIN)			+= belkin_sa.o
@@ -37,6 +39,7 @@ obj-$(CONFIG_USB_SERIAL_MCT_U232)		+= mct_u232.o
 obj-$(CONFIG_USB_SERIAL_METRO)			+= metro-usb.o
 obj-$(CONFIG_USB_SERIAL_MOS7720)		+= mos7720.o
 obj-$(CONFIG_USB_SERIAL_MOS7840)		+= mos7840.o
+obj-$(CONFIG_USB_SERIAL_MXUPORT_SERIAL)		+= mxusbserial.o
 obj-$(CONFIG_USB_SERIAL_MXUPORT)		+= mxuport.o
 obj-$(CONFIG_USB_SERIAL_NAVMAN)			+= navman.o
 obj-$(CONFIG_USB_SERIAL_OMNINET)		+= omninet.o

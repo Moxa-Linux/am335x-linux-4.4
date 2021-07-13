@@ -51,6 +51,11 @@ config USB_SERIAL_GENERIC
 	  support" be compiled as a module for this driver to be used
 	  properly.
 
+config USB_SERIAL_MXUPORT_SERIAL
+	tristate "Moxa USB Serial"
+	help
+	  The usbserial driver for Moxa Uport series
+
 config USB_SERIAL_SIMPLE
 	tristate "USB Serial Simple Driver"
 	help
@@ -478,7 +483,8 @@ config USB_SERIAL_MOS7840
 	  module will be called mos7840.  If unsure, choose N.
 
 config USB_SERIAL_MXUPORT
-	tristate "USB Moxa UPORT Serial Driver"
+	tristate "USB Moxa UPORT Serial Driver v4.0.5"
+	depends on USB_SERIAL_MXUPORT_SERIAL
 	---help---
 	  Say Y here if you want to use a MOXA UPort Serial hub.
 
